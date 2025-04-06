@@ -5,15 +5,7 @@
 //  Created by Bùi Đặng Bình on 6/4/25.
 //
 
-//
-//  VerbListView.swift
-//  JapaneseVerbs
-//
-//  Created by Bùi Đặng Bình on 6/4/25.
-//
-
 import SwiftUI
-import TikimUI
 
 struct VerbListView: View {
     @EnvironmentObject var dataManager: VerbDataManager
@@ -31,13 +23,14 @@ struct VerbListView: View {
 
             if dataManager.isLoading {
                 ProgressView("Loading verbs...")
+                    .foregroundColor(Color.appText)
             } else if let error = dataManager.error {
                 ErrorView(message: error) {
                     dataManager.loadVerbs()
                 }
             } else if filteredVerbs.isEmpty {
                 Text("No verbs found")
-                    .foregroundColor(.secondary)
+                    .foregroundColor(Color.appSubtitle)
                     .padding()
             } else {
                 List {
@@ -49,13 +42,14 @@ struct VerbListView: View {
                             Button(verb.isSelected ? "Remove" : "Add") {
                                 dataManager.toggleVerbSelection(verb)
                             }
-                            .tint(verb.isSelected ? .red : .green)
+                            .tint(verb.isSelected ? Color.appRed : Color.appGreen)
                         }
                     }
                 }
                 #if os(iOS)
                     .listStyle(InsetGroupedListStyle())
                 #endif
+                .background(Color.appBackground)
             }
 
             if !dataManager.selectedVerbs.isEmpty {
@@ -73,9 +67,11 @@ struct VerbListView: View {
                 .padding()
                 .sheet(isPresented: $showingAddToFlashcards) {
                     FlashCardView(verbs: dataManager.selectedVerbs)
+                        .withTheming()
                 }
             }
         }
+        .background(Color.appBackground)
     }
 }
 
@@ -147,17 +143,18 @@ struct VerbRowView: View {
                 HStack {
                     Text(verb.romaji)
                         .font(.headline)
+                        .foregroundColor(Color.appText)
 
                     if !verb.presentIndicativePlainPositive.isEmpty {
                         Text(verb.presentIndicativePlainPositive[0])
                             .font(.subheadline)
-                            .foregroundColor(.secondary)
+                            .foregroundColor(Color.appSubtitle)
                     }
                 }
 
                 Text(verb.presentIndicativeMeaningPositive)
                     .font(.caption)
-                    .foregroundColor(.secondary)
+                    .foregroundColor(Color.appSubtitle)
                     .lineLimit(1)
             }
 
@@ -165,7 +162,7 @@ struct VerbRowView: View {
 
             if verb.isSelected {
                 Image(systemName: "checkmark.circle.fill")
-                    .foregroundColor(.green)
+                    .foregroundColor(Color.appGreen)
             }
         }
         .padding(.vertical, 4)
@@ -180,14 +177,19 @@ struct ErrorView: View {
         VStack(spacing: 16) {
             Image(systemName: "exclamationmark.triangle")
                 .font(.largeTitle)
-                .foregroundColor(.red)
+                .foregroundColor(Color.appRed)
 
             Text(message)
                 .multilineTextAlignment(.center)
+                .foregroundColor(Color.appText)
 
             Button("Retry", action: retryAction)
-                .buttonStyle(.borderedProminent)
+                .padding()
+                .background(Color.appAccent)
+                .foregroundColor(.white)
+                .cornerRadius(8)
         }
         .padding()
+        .background(Color.appBackground)
     }
 }

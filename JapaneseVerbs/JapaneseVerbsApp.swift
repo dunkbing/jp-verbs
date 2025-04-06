@@ -7,12 +7,23 @@
 
 import SwiftData
 import SwiftUI
+import TikimUI
 
 @main
 struct JapaneseVerbsApp: App {
+    @StateObject private var themeManager = ThemeManager.shared
+
     var body: some Scene {
         WindowGroup {
-            AppContentView()
+            ZStack {
+                // Apply the background color to the entire window
+                Color.appBackground
+                    .edgesIgnoringSafeArea(.all)
+
+                AppContentView()
+            }
+            .accentColor(Color.appAccent)
+            .withTheming()
         }
         #if os(macOS)
             .windowStyle(.titleBar)
@@ -28,10 +39,12 @@ struct AppContentView: View {
         if isCompatibleWithSwiftData {
             // iOS 17+ and macOS 14+
             ContentWithSwiftData(dataManager: dataManager)
+                .background(Color.appBackground)
         } else {
             // iOS 15/16 and macOS 12/13
             ContentView()
                 .environmentObject(dataManager)
+                .background(Color.appBackground)
         }
     }
 }
@@ -47,6 +60,8 @@ struct ContentWithSwiftData: View {
 
     var body: some View {
         ZStack {
+            Color.appBackground.edgesIgnoringSafeArea(.all)
+
             if let container = modelContainer {
                 ContentView()
                     .environmentObject(dataManager)

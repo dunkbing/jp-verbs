@@ -22,6 +22,7 @@ struct VerbDetailView: View {
                         Text(verb.romaji)
                             .font(.system(.title, design: .rounded))
                             .bold()
+                            .foregroundColor(Color.appText)
 
                         Spacer()
 
@@ -30,20 +31,22 @@ struct VerbDetailView: View {
                         }) {
                             Image(systemName: verb.isSelected ? "star.fill" : "star")
                                 .font(.title2)
-                                .foregroundColor(verb.isSelected ? .yellow : .gray)
+                                .foregroundColor(
+                                    verb.isSelected ? Color.appYellow : Color.appSubtitle)
                         }
                     }
 
                     Text("Class: \(verb.verbClass)")
                         .font(.subheadline)
-                        .foregroundColor(.secondary)
+                        .foregroundColor(Color.appSubtitle)
 
                     Text(verb.presentIndicativeMeaningPositive)
                         .font(.headline)
+                        .foregroundColor(Color.appText)
                         .padding(.top, 4)
                 }
                 .padding()
-                //                .background(Color(.systemGray6))
+                .background(Color.appSurface)
                 .cornerRadius(12)
 
                 // Section selector
@@ -74,6 +77,7 @@ struct VerbDetailView: View {
             .padding()
         }
         .navigationTitle("Verb Details")
+        .background(Color.appBackground)
     }
 
     // Basic info section
@@ -165,9 +169,10 @@ struct VerbDetailView: View {
     // Conditional section - placeholder for now
     private var conditionalSection: some View {
         Text("Conditional forms would go here")
+            .foregroundColor(Color.appText)
             .frame(maxWidth: .infinity, alignment: .center)
             .padding()
-            //            .background(Color(.systemGray6))
+            .background(Color.appSurface)
             .cornerRadius(12)
     }
 }
@@ -180,23 +185,25 @@ struct ConjugationCard: View {
         VStack(alignment: .leading, spacing: 12) {
             Text(title)
                 .font(.headline)
+                .foregroundColor(Color.appText)
                 .padding(.bottom, 4)
 
             ForEach(content) { row in
                 VStack(alignment: .leading, spacing: 4) {
                     Text(row.label)
                         .font(.subheadline)
-                        .foregroundColor(.secondary)
+                        .foregroundColor(Color.appSubtitle)
 
                     ForEach(row.values, id: \.self) { value in
                         Text(value)
+                            .foregroundColor(Color.appText)
                             .padding(4)
                     }
                 }
             }
         }
         .padding()
-        //        .background(Color(.systemGray6))
+        .background(Color.appSurface)
         .cornerRadius(12)
     }
 }
@@ -210,10 +217,11 @@ struct ConjugationRow: Identifiable {
         VStack(alignment: .leading, spacing: 4) {
             Text(label)
                 .font(.subheadline)
-                .foregroundColor(.secondary)
+                .foregroundColor(Color.appSubtitle)
 
             ForEach(values, id: \.self) { value in
                 Text(value)
+                    .foregroundColor(Color.appText)
                     .padding(4)
             }
         }

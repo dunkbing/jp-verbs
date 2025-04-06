@@ -26,6 +26,7 @@ struct FlashCardDeckView: View {
         VStack(spacing: 20) {
             if dataManager.verbs.isEmpty {
                 ProgressView("Loading verbs...")
+                    .foregroundColor(Color.appText)
             } else {
                 mainContent
             }
@@ -33,8 +34,10 @@ struct FlashCardDeckView: View {
         .sheet(isPresented: $showingFlashCards) {
             if !selectedCards.isEmpty {
                 FlashCardView(verbs: selectedCards, mode: selectedMode)
+                    .withTheming()
             }
         }
+        .background(Color.appBackground)
     }
 
     // MARK: - Extracted Views
@@ -57,10 +60,11 @@ struct FlashCardDeckView: View {
             }
             .padding(.vertical)
         }
+        .background(Color.appBackground)
     }
 
     private var setupSection: some View {
-        GroupBox(label: Text("Setup Flash Cards").font(.headline)) {
+        GroupBox(label: Text("Setup Flash Cards").font(.headline).foregroundColor(Color.appText)) {
             VStack(alignment: .leading, spacing: 16) {
                 Stepper(
                     "Number of Verbs: \(numberOfVerbs)",
@@ -68,11 +72,14 @@ struct FlashCardDeckView: View {
                     in: 5...50,
                     step: 5
                 )
+                .foregroundColor(Color.appText)
 
                 Divider()
+                    .background(Color.appSurface2)
 
                 Text("Card Mode:")
                     .font(.subheadline)
+                    .foregroundColor(Color.appText)
 
                 Picker("Flash Card Mode", selection: $selectedMode) {
                     ForEach(FlashCardMode.allCases) { mode in
@@ -80,16 +87,19 @@ struct FlashCardDeckView: View {
                     }
                 }
                 .pickerStyle(SegmentedPickerStyle())
+                .accentColor(Color.appAccent)
             }
             .padding(.vertical, 8)
         }
         .padding(.horizontal)
+        .groupBoxStyle(CatppuccinGroupBoxStyle())
     }
 
     private var selectedVerbsSection: some View {
         GroupBox(
             label: Text("Selected Verbs (\(dataManager.selectedVerbs.count))")
                 .font(.headline)
+                .foregroundColor(Color.appText)
         ) {
             VStack(alignment: .leading) {
                 selectedVerbsScrollView
@@ -99,6 +109,7 @@ struct FlashCardDeckView: View {
             .padding(.vertical, 8)
         }
         .padding(.horizontal)
+        .groupBoxStyle(CatppuccinGroupBoxStyle())
     }
 
     private var selectedVerbsScrollView: some View {
@@ -116,17 +127,18 @@ struct FlashCardDeckView: View {
         HStack {
             Text(verb.romaji)
                 .lineLimit(1)
+                .foregroundColor(Color.appText)
 
             Button(action: {
                 dataManager.toggleVerbSelection(verb)
             }) {
                 Image(systemName: "xmark.circle.fill")
-                    .foregroundColor(.red)
+                    .foregroundColor(Color.appRed)
             }
         }
         .padding(.vertical, 4)
         .padding(.horizontal, 8)
-        //        .background(.systemGray5)
+        .background(Color.appSurface)
         .cornerRadius(8)
     }
 
@@ -138,7 +150,7 @@ struct FlashCardDeckView: View {
             Label("Study Selected Verbs", systemImage: "play.fill")
                 .frame(maxWidth: .infinity)
                 .padding()
-                .background(Color.blue)
+                .background(Color.appAccent)
                 .foregroundColor(.white)
                 .cornerRadius(10)
         }
@@ -146,7 +158,7 @@ struct FlashCardDeckView: View {
     }
 
     private var quickStudySection: some View {
-        GroupBox(label: Text("Quick Study").font(.headline)) {
+        GroupBox(label: Text("Quick Study").font(.headline).foregroundColor(Color.appText)) {
             Button(action: {
                 showingFlashCards = true
                 selectedCards = Array(
@@ -158,25 +170,27 @@ struct FlashCardDeckView: View {
                 )
                 .frame(maxWidth: .infinity)
                 .padding()
-                .background(Color.green)
+                .background(Color.appGreen)
                 .foregroundColor(.white)
                 .cornerRadius(10)
             }
             .padding(.vertical, 8)
         }
         .padding(.horizontal)
+        .groupBoxStyle(CatppuccinGroupBoxStyle())
     }
 
     private var tipSection: some View {
-        GroupBox(label: Text("Tip").font(.headline)) {
+        GroupBox(label: Text("Tip").font(.headline).foregroundColor(Color.appText)) {
             Text(
                 "You can select verbs for study from the Browse tab. Swipe left on a verb or tap the star in its detail view to add it to your study deck."
             )
             .font(.subheadline)
-            .foregroundColor(.secondary)
+            .foregroundColor(Color.appSubtitle)
             .padding(.vertical, 8)
         }
         .padding(.horizontal)
+        .groupBoxStyle(CatppuccinGroupBoxStyle())
     }
 }
 
@@ -195,6 +209,7 @@ struct FlashCardView: View {
             HStack {
                 Text("Card \(currentIndex + 1) of \(verbs.count)")
                     .font(.headline)
+                    .foregroundColor(Color.appText)
 
                 Spacer()
 
@@ -206,6 +221,7 @@ struct FlashCardView: View {
                 }) {
                     Text("Done")
                         .bold()
+                        .foregroundColor(Color.appAccent)
                 }
             }
             .padding()
@@ -213,6 +229,7 @@ struct FlashCardView: View {
             // Progress bar
             ProgressView(value: Double(cardsCompleted), total: Double(verbs.count))
                 .padding(.horizontal)
+                .accentColor(Color.appAccent)
 
             Spacer()
 
@@ -221,8 +238,8 @@ struct FlashCardView: View {
                 ZStack {
                     // Card background
                     RoundedRectangle(cornerRadius: 20)
-                        .fill(Color.white)
-                        .shadow(radius: 8)
+                        .fill(Color.appSurface)
+                        .shadow(color: Color.appText.opacity(0.2), radius: 8)
 
                     // Card content
                     VStack(spacing: 20) {
@@ -231,6 +248,7 @@ struct FlashCardView: View {
                             Text(questionText(for: verbs[currentIndex]))
                                 .font(.system(.title, design: .rounded))
                                 .bold()
+                                .foregroundColor(Color.appText)
                                 .multilineTextAlignment(.center)
                                 .padding()
                                 .frame(maxWidth: .infinity)
@@ -239,21 +257,24 @@ struct FlashCardView: View {
                             Text(answerText(for: verbs[currentIndex]))
                                 .font(.system(.title, design: .rounded))
                                 .bold()
+                                .foregroundColor(Color.appText)
                                 .multilineTextAlignment(.center)
                                 .padding()
                                 .frame(maxWidth: .infinity)
 
                             Divider()
+                                .background(Color.appSurface2)
 
                             // Additional info
                             VStack(alignment: .leading, spacing: 12) {
                                 Text(verbs[currentIndex].presentIndicativeMeaningPositive)
                                     .font(.headline)
+                                    .foregroundColor(Color.appText)
                                     .frame(maxWidth: .infinity, alignment: .leading)
 
                                 Text("Class: \(verbs[currentIndex].verbClass)")
                                     .font(.subheadline)
-                                    .foregroundColor(.secondary)
+                                    .foregroundColor(Color.appSubtitle)
                                     .frame(maxWidth: .infinity, alignment: .leading)
                             }
                             .padding(.horizontal)
@@ -271,8 +292,8 @@ struct FlashCardView: View {
                                 .font(.headline)
                                 .frame(maxWidth: .infinity)
                                 .padding()
-                                .background(isShowingAnswer ? Color.gray : Color.blue)
-                                .foregroundColor(.white)
+                                .background(isShowingAnswer ? Color.appSurface2 : Color.appAccent)
+                                .foregroundColor(isShowingAnswer ? Color.appText : .white)
                                 .cornerRadius(10)
                         }
                         .padding(.horizontal)
@@ -314,14 +335,16 @@ struct FlashCardView: View {
                 VStack(spacing: 20) {
                     Image(systemName: "checkmark.circle.fill")
                         .font(.system(size: 60))
-                        .foregroundColor(.green)
+                        .foregroundColor(Color.appGreen)
 
                     Text("Well done!")
                         .font(.largeTitle)
                         .bold()
+                        .foregroundColor(Color.appText)
 
                     Text("You've completed all \(verbs.count) cards")
                         .font(.headline)
+                        .foregroundColor(Color.appText)
 
                     Button(action: {
                         // Reset
@@ -333,7 +356,7 @@ struct FlashCardView: View {
                             .font(.headline)
                             .frame(maxWidth: .infinity)
                             .padding()
-                            .background(Color.blue)
+                            .background(Color.appAccent)
                             .foregroundColor(.white)
                             .cornerRadius(10)
                     }
@@ -348,11 +371,12 @@ struct FlashCardView: View {
                 // Instruction
                 Text("Swipe left or right to proceed to the next card")
                     .font(.caption)
-                    .foregroundColor(.secondary)
+                    .foregroundColor(Color.appSubtitle)
                     .padding(.bottom)
             }
         }
         .navigationTitle("Flash Cards")
+        .background(Color.appBackground)
         #if os(iOS)
             .navigationBarTitleDisplayMode(.inline)
         #endif
@@ -379,5 +403,21 @@ struct FlashCardView: View {
         case .meaning:
             return "\(verb.romaji) (\(verb.presentIndicativePlainPositive.first ?? ""))"
         }
+    }
+}
+
+// Custom Group Box Style that uses Catppuccin colors
+struct CatppuccinGroupBoxStyle: GroupBoxStyle {
+    func makeBody(configuration: Configuration) -> some View {
+        VStack(alignment: .leading) {
+            configuration.label
+                .font(.headline)
+                .padding(.bottom, 4)
+
+            configuration.content
+        }
+        .padding()
+        .background(Color.appSurface)
+        .cornerRadius(12)
     }
 }
