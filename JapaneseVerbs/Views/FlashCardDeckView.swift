@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import TikimUI
 
 struct CardSet: Identifiable {
     let id = UUID()
@@ -132,13 +133,10 @@ struct FlashCardDeckView: View {
                     .font(.subheadline)
                     .foregroundColor(Color.appText)
 
-                Picker("Flash Card Mode", selection: $selectedMode) {
-                    ForEach(FlashCardMode.allCases) { mode in
-                        Text(mode.rawValue).tag(mode)
-                    }
-                }
-                .pickerStyle(SegmentedPickerStyle())
-                .accentColor(Color.appAccent)
+                TabPickerView(
+                    selection: $selectedMode,
+                    options: FlashCardMode.allCases.map { (value: $0, title: $0.rawValue) }
+                )
             }
             .padding(.vertical, 8)
         }

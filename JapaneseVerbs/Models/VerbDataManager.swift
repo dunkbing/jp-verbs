@@ -51,11 +51,25 @@ class VerbDataManager: ObservableObject {
                 loadVerbsFromJSON(context: context)
             } else {
                 self.verbs = existingVerbs
+                loadSelectedVerbs(context: context)
                 self.isLoading = false
             }
         } catch {
             self.error = "Failed to fetch verbs: \(error.localizedDescription)"
             self.isLoading = false
+        }
+    }
+
+    private func loadSelectedVerbs(context: ModelContext) {
+        // Fetch selected verb IDs from UserDefaults
+        let selectedVerbIds = UserDefaults.standard.stringArray(forKey: "selectedVerbIds") ?? []
+
+        // Filter and set selected verbs
+        self.selectedVerbs = verbs.filter { selectedVerbIds.contains($0.id) }
+
+        // Ensure each selected verb has its isSelected flag set
+        for index in 0..<verbs.count {
+            verbs[index].isSelected = selectedVerbIds.contains(verbs[index].id)
         }
     }
 
@@ -82,6 +96,9 @@ class VerbDataManager: ObservableObject {
             try context.save()
 
             self.verbs = newVerbs
+
+            loadSelectedVerbs(context: context)
+
             self.isLoading = false
         } catch {
             let msg = "Failed to load verbs from JSON: \(error.localizedDescription)"
@@ -100,6 +117,9 @@ class VerbDataManager: ObservableObject {
             } else {
                 selectedVerbs.removeAll { $0.id == verb.id }
             }
+
+            let selectedVerbIds = selectedVerbs.map { $0.id }
+            UserDefaults.standard.set(selectedVerbIds, forKey: "selectedVerbIds")
         }
     }
 
@@ -108,11 +128,71 @@ class VerbDataManager: ObservableObject {
             return verbs
         }
 
-        return verbs.filter { verb in
-            let romaji = verb.romaji.lowercased()
-            let meaning = verb.presentIndicativeMeaningPositive.lowercased()
+        let searchText = text.lowercased()
 
-            return romaji.contains(text.lowercased()) || meaning.contains(text.lowercased())
+        return verbs.filter { verb in
+            // Romaji
+            if verb.romaji.lowercased().contains(searchText) {
+                return true
+            }
+
+            // Meanings
+            if verb.presentIndicativeMeaningPositive.lowercased().contains(searchText)
+                || verb.presentIndicativeMeaningNegative.lowercased().contains(searchText)
+            {
+                return true
+            }
+
+            // Japanese forms (plain forms)
+            if verb.presentIndicativePlainPositive.contains(where: {
+                $0.lowercased().contains(searchText)
+            })
+                || verb.presentIndicativePlainNegative.contains(where: {
+                    $0.lowercased().contains(searchText)
+                })
+            {
+                return true
+            }
+
+            // Polite forms
+            if verb.presentIndicativePolitePositive.contains(where: {
+                $0.lowercased().contains(searchText)
+            })
+                || verb.presentIndicativePoliteNegative.contains(where: {
+                    $0.lowercased().contains(searchText)
+                })
+            {
+                return true
+            }
+
+            // Past forms
+            if verb.pastIndicativePlainPositive.contains(where: {
+                $0.lowercased().contains(searchText)
+            })
+                || verb.pastIndicativePlainNegative.contains(where: {
+                    $0.lowercased().contains(searchText)
+                })
+                || verb.pastIndicativePolitePositive.contains(where: {
+                    $0.lowercased().contains(searchText)
+                })
+                || verb.pastIndicativePoliteNegative.contains(where: {
+                    $0.lowercased().contains(searchText)
+                })
+            {
+                return true
+            }
+
+            // Other properties
+            if verb.stem.lowercased().contains(searchText)
+                || verb.teForm.lowercased().contains(searchText)
+                || verb.infinitive.lowercased().contains(searchText)
+                || verb.verbClass.lowercased().contains(searchText)
+            {
+                return true
+            }
+
+            return false
         }
     }
+
 }
