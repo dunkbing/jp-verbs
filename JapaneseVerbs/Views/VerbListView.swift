@@ -45,7 +45,7 @@ struct VerbListView: View {
                     verbsList
                 }
 
-                Spacer(minLength: 150)
+                Spacer(minLength: 80)
             }
         }
         .background(Color.appBackground)
