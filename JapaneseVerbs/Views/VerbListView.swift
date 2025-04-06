@@ -11,67 +11,140 @@ struct VerbListView: View {
     @EnvironmentObject var dataManager: VerbDataManager
     @Binding var searchText: String
     @State private var showingAddToFlashcards = false
+    @State private var isSearchFocused = false
 
     var filteredVerbs: [Verb] {
         dataManager.search(text: searchText)
     }
 
     var body: some View {
-        VStack {
-            SearchBar(text: $searchText, placeholder: "Search verbs")
-                .padding(.horizontal)
-
-            if dataManager.isLoading {
-                ProgressView("Loading verbs...")
-                    .foregroundColor(Color.appText)
-            } else if let error = dataManager.error {
-                ErrorView(message: error) {
-                    dataManager.loadVerbs()
-                }
-            } else if filteredVerbs.isEmpty {
-                Text("No verbs found")
-                    .foregroundColor(Color.appSubtitle)
-                    .padding()
-            } else {
-                List {
-                    ForEach(filteredVerbs) { verb in
-                        NavigationLink(destination: VerbDetailView(verb: verb)) {
-                            VerbRowView(verb: verb)
-                        }
-                        .swipeActions {
-                            Button(verb.isSelected ? "Remove" : "Add") {
-                                dataManager.toggleVerbSelection(verb)
-                            }
-                            .tint(verb.isSelected ? Color.appRed : Color.appGreen)
+        ZStack(alignment: .bottom) {
+            VStack(spacing: 0) {
+                SearchBar(
+                    text: $searchText, placeholder: "Search verbs",
+                    onFocusChange: { focused in
+                        withAnimation {
+                            isSearchFocused = focused
                         }
                     }
+                )
+                .padding(.horizontal)
+                .padding(.top, 8)
+
+                if dataManager.isLoading {
+                    loadingView
+                } else if let error = dataManager.error {
+                    errorView(message: error)
+                } else if filteredVerbs.isEmpty {
+                    emptyStateView
+                } else {
+                    verbsList
                 }
-                #if os(iOS)
-                    .listStyle(InsetGroupedListStyle())
-                #endif
-                .background(Color.appBackground)
             }
 
-            if !dataManager.selectedVerbs.isEmpty {
-                Button(action: {
-                    showingAddToFlashcards = true
-                }) {
-                    Text("Study \(dataManager.selectedVerbs.count) selected verbs")
-                        .font(.system(.headline, design: .rounded))
-                        .padding()
-                        .frame(maxWidth: .infinity)
-                        .background(Color.appAccent)
-                        .foregroundColor(.white)
-                        .cornerRadius(10)
-                }
-                .padding()
-                .sheet(isPresented: $showingAddToFlashcards) {
-                    FlashCardView(verbs: dataManager.selectedVerbs)
-                        .withTheming()
-                }
+            if !dataManager.selectedVerbs.isEmpty && !isSearchFocused {
+                studyButton
             }
         }
         .background(Color.appBackground)
+    }
+
+    // MARK: - Component Views
+
+    private var loadingView: some View {
+        VStack {
+            Spacer()
+            ProgressView("Loading verbs...")
+                .foregroundColor(Color.appText)
+            Spacer()
+        }
+    }
+
+    private func errorView(message: String) -> some View {
+        ErrorView(message: message) {
+            dataManager.loadVerbs()
+        }
+    }
+
+    private var emptyStateView: some View {
+        VStack(spacing: 16) {
+            Spacer()
+
+            Image(systemName: "magnifyingglass")
+                .font(.system(size: 40))
+                .foregroundColor(Color.appSubtitle)
+
+            Text("No verbs found")
+                .font(.headline)
+                .foregroundColor(Color.appSubtitle)
+
+            if !searchText.isEmpty {
+                Text("Try a different search term")
+                    .font(.subheadline)
+                    .foregroundColor(Color.appSubtitle.opacity(0.7))
+
+                Button(action: {
+                    searchText = ""
+                }) {
+                    Text("Clear Search")
+                        .padding(.horizontal, 16)
+                        .padding(.vertical, 8)
+                        .background(Color.appAccent)
+                        .foregroundColor(.white)
+                        .cornerRadius(8)
+                }
+                .padding(.top, 8)
+            }
+
+            Spacer()
+        }
+    }
+
+    private var verbsList: some View {
+        List {
+            ForEach(filteredVerbs) { verb in
+                NavigationLink(destination: VerbDetailView(verb: verb)) {
+                    VerbRowView(verb: verb)
+                }
+                .swipeActions {
+                    Button(verb.isSelected ? "Remove" : "Add") {
+                        dataManager.toggleVerbSelection(verb)
+                    }
+                    .tint(verb.isSelected ? Color.appRed : Color.appGreen)
+                }
+            }
+        }
+        #if os(iOS)
+            .listStyle(InsetGroupedListStyle())
+        #endif
+        .background(Color.appBackground)
+        // Add extra padding at bottom to account for the study button
+        .padding(.bottom, dataManager.selectedVerbs.isEmpty ? 0 : 60)
+    }
+
+    private var studyButton: some View {
+        Button(action: {
+            showingAddToFlashcards = true
+        }) {
+            HStack {
+                Image(systemName: "rectangle.stack.fill")
+                    .font(.headline)
+
+                Text("Study \(dataManager.selectedVerbs.count) selected verbs")
+                    .font(.system(.headline, design: .rounded))
+            }
+            .padding()
+            .frame(maxWidth: .infinity)
+            .background(Color.appAccent)
+            .foregroundColor(.white)
+            .cornerRadius(10)
+            .shadow(color: Color.black.opacity(0.2), radius: 4, x: 0, y: 2)
+        }
+        .padding()
+        .sheet(isPresented: $showingAddToFlashcards) {
+            FlashCardView(verbs: dataManager.selectedVerbs)
+                .withTheming()
+        }
     }
 }
 
@@ -79,6 +152,7 @@ struct SearchBar: View {
     @Binding var text: String
     var placeholder: String
     var onCommit: (() -> Void)? = nil
+    var onFocusChange: ((Bool) -> Void)? = nil
 
     // Animation states
     @State private var isFocused: Bool = false
@@ -98,6 +172,7 @@ struct SearchBar: View {
                 .onChange(of: isTextFieldFocused) { focused in
                     withAnimation {
                         isFocused = focused
+                        onFocusChange?(focused)
                     }
                 }
                 .submitLabel(.search)

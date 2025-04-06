@@ -12,6 +12,10 @@ import TikimUI
 @main
 struct JapaneseVerbsApp: App {
     @StateObject private var themeManager = ThemeManager.shared
+    @State private var isLoading = true
+    @State private var modelContainer: ModelContainer?
+    @State private var error: String?
+    @State private var showSplash = true
 
     var body: some Scene {
         WindowGroup {
@@ -20,76 +24,128 @@ struct JapaneseVerbsApp: App {
                 Color.appBackground
                     .edgesIgnoringSafeArea(.all)
 
-                AppContentView()
+                // Main content based on loading state
+                if showSplash {
+                    SplashScreenView {
+                        withAnimation {
+                            self.showSplash = false
+                        }
+                    }
+                } else if isLoading {
+                    LoadingView()
+                        .transition(.opacity)
+                } else if let error = error {
+                    ErrorView(message: "Failed to initialize app: \(error)") {
+                        Task {
+                            await setupModelContainer()
+                        }
+                    }
+                    .transition(.opacity)
+                } else if let container = modelContainer {
+                    if isCompatibleWithSwiftData {
+                        ContentView()
+                            .environmentObject(createDataManager() as! VerbDataManager)
+                            .modelContainer(container)
+                            .transition(.opacity)
+                    } else {
+                        ContentView()
+                            .environmentObject(createDataManager() as! LegacyVerbDataManager)
+                            .transition(.opacity)
+                    }
+                } else {
+                    if isCompatibleWithSwiftData {
+                        ContentView()
+                            .environmentObject(createDataManager() as! VerbDataManager)
+                            .transition(.opacity)
+                    } else {
+                        ContentView()
+                            .environmentObject(createDataManager() as! LegacyVerbDataManager)
+                            .transition(.opacity)
+                    }
+                }
             }
             .accentColor(Color.appAccent)
             .withTheming()
+            .onAppear {
+                // Start loading in the background while splash is showing
+                Task {
+                    await setupModelContainer()
+                }
+            }
         }
         #if os(macOS)
             .windowStyle(.titleBar)
             .windowToolbarStyle(.unified)
         #endif
     }
-}
 
-struct AppContentView: View {
-    @StateObject private var dataManager = VerbDataManager()
+    @MainActor
+    private func setupModelContainer() async {
+        // Add a slight delay to ensure splash screen shows properly
+        try? await Task.sleep(nanoseconds: 1_000_000_000)  // 1 second
 
-    var body: some View {
         if isCompatibleWithSwiftData {
-            // iOS 17+ and macOS 14+
-            ContentWithSwiftData(dataManager: dataManager)
-                .background(Color.appBackground)
-        } else {
-            // iOS 15/16 and macOS 12/13
-            ContentView()
-                .environmentObject(dataManager)
-                .background(Color.appBackground)
-        }
-    }
-}
-
-struct ContentWithSwiftData: View {
-    var dataManager: VerbDataManager
-    @State private var modelContainer: ModelContainer?
-    @State private var error: String?
-
-    init(dataManager: VerbDataManager) {
-        self.dataManager = dataManager
-    }
-
-    var body: some View {
-        ZStack {
-            Color.appBackground.edgesIgnoringSafeArea(.all)
-
-            if let container = modelContainer {
-                ContentView()
-                    .environmentObject(dataManager)
-                    .modelContainer(container)
-            } else if let error = error {
-                ErrorView(message: "Failed to initialize database: \(error)") {
-                    Task {
-                        await setupModelContainer()
-                    }
+            do {
+                let container = try await PersistenceManager.shared.modelContainer()
+                self.modelContainer = container
+                withAnimation {
+                    self.isLoading = false
                 }
-            } else {
-                ProgressView("Initializing...")
-                    .onAppear {
-                        Task {
-                            await setupModelContainer()
-                        }
-                    }
+            } catch {
+                withAnimation {
+                    self.error = error.localizedDescription
+                    self.isLoading = false
+                }
+            }
+        } else {
+            // For older systems without SwiftData
+            withAnimation {
+                self.isLoading = false
             }
         }
     }
 
     @MainActor
-    private func setupModelContainer() async {
-        do {
-            let container = try await PersistenceManager.shared.modelContainer()
-            self.modelContainer = container
-        } catch {
-            self.error = error.localizedDescription
+    private func createDataManager() -> Any {
+        if isCompatibleWithSwiftData {
+            return VerbDataManager()
+        } else {
+            return LegacyVerbDataManager()
         }
+    }
+}
+
+struct LoadingView: View {
+    @State private var isRotating = false
+
+    var body: some View {
+        VStack(spacing: 20) {
+            Image(systemName: "character.book.closed.fill")
+                .font(.system(size: 80))
+                .foregroundColor(Color.appAccent)
+                .rotationEffect(.degrees(isRotating ? 360 : 0))
+                .animation(
+                    Animation.linear(duration: 2.0)
+                        .repeatForever(autoreverses: false),
+                    value: isRotating
+                )
+                .onAppear {
+                    self.isRotating = true
+                }
+
+            Text("Loading Japanese Verbs")
+                .font(.system(.title, design: .rounded))
+                .bold()
+                .foregroundColor(Color.appText)
+
+            ProgressView()
+                .progressViewStyle(CircularProgressViewStyle())
+                .scaleEffect(1.2)
+                .padding(.top)
+        }
+        .padding()
+        .background(Color.appSurface.opacity(0.8))
+        .cornerRadius(16)
+        .shadow(color: Color.appText.opacity(0.1), radius: 10)
     }
 }

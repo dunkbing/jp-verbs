@@ -47,7 +47,6 @@ struct SettingsView: View {
             }
 
             Section(header: Text("Flash Cards")) {
-                // Show selection count
                 HStack {
                     Text("Selected Verbs")
                     Spacer()
@@ -55,7 +54,6 @@ struct SettingsView: View {
                         .foregroundColor(.secondary)
                 }
 
-                // Reset selection button
                 Button(action: {
                     resetConfirmationShown = true
                 }) {
@@ -86,20 +84,10 @@ struct SettingsView: View {
                         .foregroundColor(.secondary)
                 }
 
-                Link(destination: URL(string: "https://github.com/your-username/japanese-verbs")!) {
+                Link(destination: URL(string: "https://github.com/dunkbing/jp-verbs")!) {
                     HStack {
                         Image(systemName: "globe")
                         Text("GitHub Repository")
-                        Spacer()
-                        Image(systemName: "arrow.up.right.square")
-                            .font(.caption)
-                    }
-                }
-
-                Link(destination: URL(string: "https://catppuccin.com")!) {
-                    HStack {
-                        Image(systemName: "paintpalette")
-                        Text("Catppuccin Theme")
                         Spacer()
                         Image(systemName: "arrow.up.right.square")
                             .font(.caption)

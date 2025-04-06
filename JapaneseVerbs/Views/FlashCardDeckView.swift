@@ -23,49 +23,93 @@ struct FlashCardDeckView: View {
     }
 
     var body: some View {
-        VStack(spacing: 20) {
-            if dataManager.verbs.isEmpty {
-                ProgressView("Loading verbs...")
-                    .foregroundColor(Color.appText)
-            } else {
-                mainContent
+        ScrollView {
+            VStack(spacing: 20) {
+                if dataManager.verbs.isEmpty {
+                    ProgressView("Loading verbs...")
+                        .foregroundColor(Color.appText)
+                        .padding(.top, 50)
+                } else {
+                    // Header Image
+                    headerView
+
+                    // Main Content
+                    mainContent
+                        .padding(.bottom, 80)  // Account for tab bar
+                }
             }
+            .animation(.easeInOut(duration: 0.3), value: dataManager.selectedVerbs.count)
         }
+        .background(Color.appBackground)
         .sheet(isPresented: $showingFlashCards) {
             if !selectedCards.isEmpty {
                 FlashCardView(verbs: selectedCards, mode: selectedMode)
                     .withTheming()
             }
         }
-        .background(Color.appBackground)
     }
 
     // MARK: - Extracted Views
 
-    private var mainContent: some View {
-        ScrollView {
-            VStack(alignment: .leading, spacing: 20) {
-                setupSection
+    private var headerView: some View {
+        VStack(spacing: 16) {
+            Image(systemName: "rectangle.stack.fill")
+                .font(.system(size: 60))
+                .foregroundColor(Color.appAccent)
+                .padding()
+                .background(
+                    Circle()
+                        .fill(Color.appSurface2.opacity(0.3))
+                )
+                .padding(.top, 20)
 
-                // Selected Verb List
-                if !dataManager.selectedVerbs.isEmpty {
-                    selectedVerbsSection
-                }
+            Text("Flash Cards")
+                .font(.system(.title, design: .rounded))
+                .bold()
+                .foregroundColor(Color.appText)
 
-                // Random Verbs Option
-                quickStudySection
-
-                // Selection guide
-                tipSection
-            }
-            .padding(.vertical)
+            Text("Review and memorize Japanese verbs")
+                .font(.subheadline)
+                .foregroundColor(Color.appSubtitle)
+                .multilineTextAlignment(.center)
+                .padding(.horizontal)
         }
-        .background(Color.appBackground)
+        .padding(.bottom, 10)
+    }
+
+    private var mainContent: some View {
+        VStack(alignment: .leading, spacing: 20) {
+            setupSection
+
+            // Selected Verb List
+            if !dataManager.selectedVerbs.isEmpty {
+                selectedVerbsSection
+            }
+
+            // Random Verbs Option
+            quickStudySection
+
+            // Selection guide
+            tipSection
+        }
+        .padding(.vertical)
+        .padding(.horizontal)
     }
 
     private var setupSection: some View {
-        GroupBox(label: Text("Setup Flash Cards").font(.headline).foregroundColor(Color.appText)) {
+        GroupBox {
             VStack(alignment: .leading, spacing: 16) {
+                HStack {
+                    Image(systemName: "gear")
+                        .font(.title2)
+                        .foregroundColor(Color.appAccent)
+
+                    Text("Setup Flash Cards")
+                        .font(.headline)
+                        .foregroundColor(Color.appText)
+                }
+                .padding(.bottom, 4)
+
                 Stepper(
                     "Number of Verbs: \(numberOfVerbs)",
                     value: $numberOfVerbs,
@@ -91,25 +135,31 @@ struct FlashCardDeckView: View {
             }
             .padding(.vertical, 8)
         }
-        .padding(.horizontal)
         .groupBoxStyle(CatppuccinGroupBoxStyle())
     }
 
     private var selectedVerbsSection: some View {
-        GroupBox(
-            label: Text("Selected Verbs (\(dataManager.selectedVerbs.count))")
-                .font(.headline)
-                .foregroundColor(Color.appText)
-        ) {
+        GroupBox {
             VStack(alignment: .leading) {
+                HStack {
+                    Image(systemName: "star.fill")
+                        .font(.title2)
+                        .foregroundColor(Color.appYellow)
+
+                    Text("Selected Verbs (\(dataManager.selectedVerbs.count))")
+                        .font(.headline)
+                        .foregroundColor(Color.appText)
+                }
+                .padding(.bottom, 8)
+
                 selectedVerbsScrollView
 
                 startStudyButton
             }
             .padding(.vertical, 8)
         }
-        .padding(.horizontal)
         .groupBoxStyle(CatppuccinGroupBoxStyle())
+        .transition(.opacity.combined(with: .move(edge: .top)))
     }
 
     private var selectedVerbsScrollView: some View {
@@ -136,8 +186,8 @@ struct FlashCardDeckView: View {
                     .foregroundColor(Color.appRed)
             }
         }
-        .padding(.vertical, 4)
-        .padding(.horizontal, 8)
+        .padding(.vertical, 6)
+        .padding(.horizontal, 10)
         .background(Color.appSurface)
         .cornerRadius(8)
     }
@@ -158,38 +208,63 @@ struct FlashCardDeckView: View {
     }
 
     private var quickStudySection: some View {
-        GroupBox(label: Text("Quick Study").font(.headline).foregroundColor(Color.appText)) {
-            Button(action: {
-                showingFlashCards = true
-                selectedCards = Array(
-                    dataManager.verbs.shuffled().prefix(numberOfVerbs))
-            }) {
-                Label(
-                    "Start with \(numberOfVerbs) Random Verbs",
-                    systemImage: "shuffle"
-                )
-                .frame(maxWidth: .infinity)
-                .padding()
-                .background(Color.appGreen)
-                .foregroundColor(.white)
-                .cornerRadius(10)
+        GroupBox {
+            VStack(alignment: .leading) {
+                HStack {
+                    Image(systemName: "shuffle")
+                        .font(.title2)
+                        .foregroundColor(Color.appGreen)
+
+                    Text("Quick Study")
+                        .font(.headline)
+                        .foregroundColor(Color.appText)
+                }
+                .padding(.bottom, 8)
+
+                Button(action: {
+                    showingFlashCards = true
+                    selectedCards = Array(
+                        dataManager.verbs.shuffled().prefix(numberOfVerbs))
+                }) {
+                    Label(
+                        "Start with \(numberOfVerbs) Random Verbs",
+                        systemImage: "shuffle"
+                    )
+                    .frame(maxWidth: .infinity)
+                    .padding()
+                    .background(Color.appGreen)
+                    .foregroundColor(.white)
+                    .cornerRadius(10)
+                }
+                .padding(.vertical, 8)
             }
-            .padding(.vertical, 8)
         }
-        .padding(.horizontal)
         .groupBoxStyle(CatppuccinGroupBoxStyle())
     }
 
     private var tipSection: some View {
-        GroupBox(label: Text("Tip").font(.headline).foregroundColor(Color.appText)) {
-            Text(
-                "You can select verbs for study from the Browse tab. Swipe left on a verb or tap the star in its detail view to add it to your study deck."
-            )
-            .font(.subheadline)
-            .foregroundColor(Color.appSubtitle)
+        GroupBox {
+            HStack(alignment: .top, spacing: 12) {
+                Image(systemName: "lightbulb.fill")
+                    .font(.title2)
+                    .foregroundColor(Color.appYellow)
+                    .padding(.top, 2)
+
+                VStack(alignment: .leading) {
+                    Text("Tip")
+                        .font(.headline)
+                        .foregroundColor(Color.appText)
+                        .padding(.bottom, 2)
+
+                    Text(
+                        "You can select verbs for study from the Browse tab. Swipe left on a verb or tap the star in its detail view to add it to your study deck."
+                    )
+                    .font(.subheadline)
+                    .foregroundColor(Color.appSubtitle)
+                }
+            }
             .padding(.vertical, 8)
         }
-        .padding(.horizontal)
         .groupBoxStyle(CatppuccinGroupBoxStyle())
     }
 }
@@ -202,6 +277,7 @@ struct FlashCardView: View {
     @State private var isShowingAnswer = false
     @State private var offset: CGSize = .zero
     @State private var cardsCompleted = 0
+    @Environment(\.dismiss) private var dismiss
 
     var body: some View {
         VStack {
@@ -215,9 +291,7 @@ struct FlashCardView: View {
 
                 Button(action: {
                     // Reset and exit
-                    currentIndex = 0
-                    isShowingAnswer = false
-                    offset = .zero
+                    dismiss()
                 }) {
                     Text("Done")
                         .bold()
@@ -411,7 +485,6 @@ struct CatppuccinGroupBoxStyle: GroupBoxStyle {
     func makeBody(configuration: Configuration) -> some View {
         VStack(alignment: .leading) {
             configuration.label
-                .font(.headline)
                 .padding(.bottom, 4)
 
             configuration.content
