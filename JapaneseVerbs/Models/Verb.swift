@@ -10,7 +10,7 @@ import SwiftData
 
 @Model
 final class Verb: Identifiable {
-    var id: String
+    public var id: String
     var verbClass: String
     var stem: String
     var teForm: String

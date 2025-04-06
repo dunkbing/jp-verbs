@@ -59,6 +59,7 @@ struct VerbDetailView: View {
             .padding()
         }
         .navigationTitle("Verb Details")
+        //        .navigationBarHidden(true)
         .background(Color.appBackground)
     }
 

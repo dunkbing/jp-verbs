@@ -7,11 +7,17 @@
 
 import SwiftUI
 
+struct CardSet: Identifiable {
+    let id = UUID()
+    let cards: [Verb]
+}
+
 struct FlashCardDeckView: View {
     @EnvironmentObject var dataManager: VerbDataManager
     @State private var showingFlashCards = false
     @State private var numberOfVerbs = 10
     @State private var selectedCards: [Verb] = []
+    @State private var cardsToPresent: CardSet?
     @State private var selectedMode = FlashCardMode.romaji
 
     enum FlashCardMode: String, CaseIterable, Identifiable {
@@ -19,7 +25,7 @@ struct FlashCardDeckView: View {
         case japanese = "Japanese → Romaji"
         case meaning = "Meaning → Verb"
 
-        var id: String { self.rawValue }
+        var id: String { rawValue }
     }
 
     var body: some View {
@@ -35,21 +41,21 @@ struct FlashCardDeckView: View {
 
                     // Main Content
                     mainContent
-                        .padding(.bottom, 80)  // Account for tab bar
+                        .padding(.bottom, 80)
                 }
             }
             .animation(.easeInOut(duration: 0.3), value: dataManager.selectedVerbs.count)
         }
         .background(Color.appBackground)
-        .sheet(isPresented: $showingFlashCards) {
-            if !selectedCards.isEmpty {
-                FlashCardView(verbs: selectedCards, mode: selectedMode)
-                    .withTheming()
-            }
+        .sheet(item: $cardsToPresent) { cardSet in
+            FlashCardView(verbs: cardSet.cards, mode: selectedMode)
+                .withTheming()
+        }
+        .onAppear {
+            selectedCards = Array(
+                dataManager.verbs.shuffled().prefix(numberOfVerbs))
         }
     }
-
-    // MARK: - Extracted Views
 
     private var headerView: some View {
         VStack(spacing: 16) {
@@ -194,8 +200,12 @@ struct FlashCardDeckView: View {
 
     private var startStudyButton: some View {
         Button(action: {
-            showingFlashCards = true
-            selectedCards = dataManager.selectedVerbs
+            selectedCards = Array(
+                dataManager.verbs.shuffled().prefix(numberOfVerbs))
+            // Only show the flash cards if we have cards selected
+            if !selectedCards.isEmpty {
+                showingFlashCards = true
+            }
         }) {
             Label("Study Selected Verbs", systemImage: "play.fill")
                 .frame(maxWidth: .infinity)
@@ -222,9 +232,8 @@ struct FlashCardDeckView: View {
                 .padding(.bottom, 8)
 
                 Button(action: {
-                    showingFlashCards = true
-                    selectedCards = Array(
-                        dataManager.verbs.shuffled().prefix(numberOfVerbs))
+                    let selectedCards = Array(dataManager.verbs.shuffled().prefix(numberOfVerbs))
+                    cardsToPresent = CardSet(cards: selectedCards)
                 }) {
                     Label(
                         "Start with \(numberOfVerbs) Random Verbs",
