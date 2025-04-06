@@ -97,6 +97,7 @@ struct FlashCardDeckView: View {
 
             // Selection guide
             tipSection
+            Spacer(minLength: 80)
         }
         .padding(.vertical)
         .padding(.horizontal)

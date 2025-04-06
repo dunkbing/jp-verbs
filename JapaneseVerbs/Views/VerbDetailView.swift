@@ -12,6 +12,7 @@ struct VerbDetailView: View {
     let verb: Verb
     @EnvironmentObject var dataManager: VerbDataManager
     @State private var selectedSection = "Basic"
+    @Environment(\.presentationMode) var presentationMode
 
     // Define sections for the tab picker
     private let sections = ["Basic", "Present", "Past", "Progressive", "Conditional"]
@@ -28,6 +29,24 @@ struct VerbDetailView: View {
     private var iOSLayout: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 20) {
+                // Custom navigation area
+                HStack {
+                    BackButton(label: "Back to Verbs")
+
+                    Spacer()
+
+                    Button(action: {
+                        dataManager.toggleVerbSelection(verb)
+                    }) {
+                        Image(systemName: verb.isSelected ? "star.fill" : "star")
+                            .font(.title2)
+                            .foregroundColor(verb.isSelected ? Color.appYellow : Color.appSubtitle)
+                            .padding(.trailing, 10)
+                    }
+                }
+                .padding(.top, 8)
+                .padding(.bottom, 12)
+
                 // Header section with verb information
                 verbHeaderSection
 
@@ -57,9 +76,9 @@ struct VerbDetailView: View {
                 }
             }
             .padding()
+            Spacer(minLength: 150)
         }
-        .navigationTitle("Verb Details")
-        //        .navigationBarHidden(true)
+        .navigationBarHidden(true)
         .background(Color.appBackground)
     }
 
@@ -67,6 +86,24 @@ struct VerbDetailView: View {
     private var macOSLayout: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 24) {
+                // Custom navigation area
+                HStack {
+                    BackButton(label: "Back to Verbs")
+
+                    Spacer()
+
+                    Button(action: {
+                        dataManager.toggleVerbSelection(verb)
+                    }) {
+                        Image(systemName: verb.isSelected ? "star.fill" : "star")
+                            .font(.title2)
+                            .foregroundColor(verb.isSelected ? Color.appYellow : Color.appSubtitle)
+                            .padding(.trailing, 10)
+                    }
+                }
+                .padding(.top, 8)
+                .padding(.bottom, 12)
+
                 // Header section
                 verbHeaderSection
 
@@ -92,7 +129,7 @@ struct VerbDetailView: View {
             }
             .padding()
         }
-        .navigationTitle("Verb Details")
+        .navigationBarHidden(true)
         .background(Color.appBackground)
     }
 
@@ -105,6 +142,167 @@ struct VerbDetailView: View {
             .padding(.horizontal, 12)
             .background(Color.appSurface2)
             .cornerRadius(8)
+    }
+
+    // Header section with verb name and basic info
+    private var verbHeaderSection: some View {
+        VStack(alignment: .leading, spacing: 8) {
+            HStack {
+                Text(verb.romaji)
+                    .font(.system(.title, design: .rounded))
+                    .bold()
+                    .foregroundColor(Color.appText)
+
+                Spacer()
+            }
+
+            Text("Class: \(verb.verbClass)")
+                .font(.subheadline)
+                .foregroundColor(Color.appSubtitle)
+
+            Text(verb.presentIndicativeMeaningPositive)
+                .font(.headline)
+                .foregroundColor(Color.appText)
+                .padding(.top, 4)
+        }
+        .padding()
+        .background(Color.appSurface)
+        .cornerRadius(12)
+    }
+
+    // Basic info section - only used for iOS
+    private var basicInfoSection: some View {
+        VStack(alignment: .leading, spacing: 16) {
+            HStack {
+                ConjugationCard(
+                    title: "Dictionary Form",
+                    content: [
+                        ConjugationRow(label: "Romaji", values: [verb.romaji]),
+                        ConjugationRow(
+                            label: "Japanese",
+                            values: verb.presentIndicativePlainPositive.count > 1
+                                ? [verb.presentIndicativePlainPositive[1]] : []),
+                    ])
+
+                Spacer()
+
+                ConjugationCard(
+                    title: "Stem & Infinitive",
+                    content: [
+                        ConjugationRow(label: "Stem", values: [verb.stem]),
+                        ConjugationRow(label: "Infinitive", values: [verb.infinitive]),
+                        ConjugationRow(label: "Te Form", values: [verb.teForm]),
+                    ])
+            }
+
+            ConjugationCard(
+                title: "Meaning",
+                content: [
+                    ConjugationRow(
+                        label: "Positive", values: [verb.presentIndicativeMeaningPositive]),
+                    ConjugationRow(
+                        label: "Negative", values: [verb.presentIndicativeMeaningNegative]),
+                ])
+        }
+        .padding(.horizontal, 16)
+    }
+
+    // Present indicative section - only used for iOS
+    private var presentIndicativeSection: some View {
+        HStack {
+            ConjugationCard(
+                title: "Plain Form",
+                content: [
+                    ConjugationRow(label: "Positive", values: verb.presentIndicativePlainPositive),
+                    ConjugationRow(label: "Negative", values: verb.presentIndicativePlainNegative),
+                ])
+
+            Spacer()
+
+            ConjugationCard(
+                title: "Polite Form",
+                content: [
+                    ConjugationRow(label: "Positive", values: verb.presentIndicativePolitePositive),
+                    ConjugationRow(label: "Negative", values: verb.presentIndicativePoliteNegative),
+                ])
+        }
+        .padding(.horizontal, 20)
+    }
+
+    // Past indicative section - only used for iOS
+    private var pastIndicativeSection: some View {
+        HStack {
+            ConjugationCard(
+                title: "Plain Form",
+                content: [
+                    ConjugationRow(label: "Positive", values: verb.pastIndicativePlainPositive),
+                    ConjugationRow(label: "Negative", values: verb.pastIndicativePlainNegative),
+                ])
+
+            Spacer()
+
+            ConjugationCard(
+                title: "Polite Form",
+                content: [
+                    ConjugationRow(label: "Positive", values: verb.pastIndicativePolitePositive),
+                    ConjugationRow(label: "Negative", values: verb.pastIndicativePoliteNegative),
+                ])
+        }.padding(.horizontal, 16)
+    }
+
+    // Progressive section - only used for iOS
+    private var progressiveSection: some View {
+        VStack(alignment: .leading, spacing: 16) {
+            ConjugationCard(
+                title: "Present Progressive",
+                content: [
+                    ConjugationRow(
+                        label: "Plain Positive", values: verb.presentProgressivePlainPositive),
+                    ConjugationRow(
+                        label: "Polite Positive", values: verb.presentProgressivePolitePositive),
+                    ConjugationRow(
+                        label: "Polite Negative", values: verb.presentProgressivePoliteNegative),
+                ])
+        }
+    }
+
+    // Conditional section - only used for iOS
+    private var conditionalSection: some View {
+        VStack(alignment: .leading, spacing: 16) {
+            // Provisional Conditional (eba form)
+            ConjugationCard(
+                title: "Provisional Conditional (eba form)",
+                content: [
+                    ConjugationRow(
+                        label: "Positive", values: verb.provisionalConditionalPlainPositive),
+                    ConjugationRow(
+                        label: "Negative", values: verb.provisionalConditionalPlainNegative),
+                ])
+
+            // Conditional Tara form
+            HStack {
+                ConjugationCard(
+                    title: "Tara Form - Plain",
+                    content: [
+                        ConjugationRow(
+                            label: "Positive", values: verb.conditionalTaraPlainPositive),
+                        ConjugationRow(
+                            label: "Negative", values: verb.conditionalTaraPlainNegative),
+                    ])
+
+                Spacer()
+
+                ConjugationCard(
+                    title: "Tara Form - Polite",
+                    content: [
+                        ConjugationRow(
+                            label: "Positive", values: verb.conditionalTaraPolitePositive),
+                        ConjugationRow(
+                            label: "Negative", values: verb.conditionalTaraPoliteNegative),
+                    ])
+            }
+        }
+        .padding(.horizontal, 16)
     }
 
     // macOS Basic Info row
@@ -596,175 +794,6 @@ struct VerbDetailView: View {
             }
         }
         .padding(.vertical, 8)
-    }
-
-    // Header section with verb name and basic info
-    private var verbHeaderSection: some View {
-        VStack(alignment: .leading, spacing: 8) {
-            HStack {
-                Text(verb.romaji)
-                    .font(.system(.title, design: .rounded))
-                    .bold()
-                    .foregroundColor(Color.appText)
-
-                Spacer()
-
-                Button(action: {
-                    dataManager.toggleVerbSelection(verb)
-                }) {
-                    Image(systemName: verb.isSelected ? "star.fill" : "star")
-                        .font(.title2)
-                        .foregroundColor(verb.isSelected ? Color.appYellow : Color.appSubtitle)
-                }
-            }
-
-            Text("Class: \(verb.verbClass)")
-                .font(.subheadline)
-                .foregroundColor(Color.appSubtitle)
-
-            Text(verb.presentIndicativeMeaningPositive)
-                .font(.headline)
-                .foregroundColor(Color.appText)
-                .padding(.top, 4)
-        }
-        .padding()
-        .background(Color.appSurface)
-        .cornerRadius(12)
-    }
-
-    // Basic info section - only used for iOS
-    private var basicInfoSection: some View {
-        VStack(alignment: .leading, spacing: 16) {
-            HStack {
-                ConjugationCard(
-                    title: "Dictionary Form",
-                    content: [
-                        ConjugationRow(label: "Romaji", values: [verb.romaji]),
-                        ConjugationRow(
-                            label: "Japanese",
-                            values: verb.presentIndicativePlainPositive.count > 1
-                                ? [verb.presentIndicativePlainPositive[1]] : []),
-                    ])
-
-                Spacer()
-
-                ConjugationCard(
-                    title: "Stem & Infinitive",
-                    content: [
-                        ConjugationRow(label: "Stem", values: [verb.stem]),
-                        ConjugationRow(label: "Infinitive", values: [verb.infinitive]),
-                        ConjugationRow(label: "Te Form", values: [verb.teForm]),
-                    ])
-            }
-
-            ConjugationCard(
-                title: "Meaning",
-                content: [
-                    ConjugationRow(
-                        label: "Positive", values: [verb.presentIndicativeMeaningPositive]),
-                    ConjugationRow(
-                        label: "Negative", values: [verb.presentIndicativeMeaningNegative]),
-                ])
-        }
-        .padding(.horizontal, 16)
-    }
-
-    // Present indicative section - only used for iOS
-    private var presentIndicativeSection: some View {
-        HStack {
-            ConjugationCard(
-                title: "Plain Form",
-                content: [
-                    ConjugationRow(label: "Positive", values: verb.presentIndicativePlainPositive),
-                    ConjugationRow(label: "Negative", values: verb.presentIndicativePlainNegative),
-                ])
-
-            Spacer()
-
-            ConjugationCard(
-                title: "Polite Form",
-                content: [
-                    ConjugationRow(label: "Positive", values: verb.presentIndicativePolitePositive),
-                    ConjugationRow(label: "Negative", values: verb.presentIndicativePoliteNegative),
-                ])
-        }
-        .padding(.horizontal, 20)
-    }
-
-    // Past indicative section - only used for iOS
-    private var pastIndicativeSection: some View {
-        HStack {
-            ConjugationCard(
-                title: "Plain Form",
-                content: [
-                    ConjugationRow(label: "Positive", values: verb.pastIndicativePlainPositive),
-                    ConjugationRow(label: "Negative", values: verb.pastIndicativePlainNegative),
-                ])
-
-            Spacer()
-
-            ConjugationCard(
-                title: "Polite Form",
-                content: [
-                    ConjugationRow(label: "Positive", values: verb.pastIndicativePolitePositive),
-                    ConjugationRow(label: "Negative", values: verb.pastIndicativePoliteNegative),
-                ])
-        }.padding(.horizontal, 16)
-    }
-
-    // Progressive section - only used for iOS
-    private var progressiveSection: some View {
-        VStack(alignment: .leading, spacing: 16) {
-            ConjugationCard(
-                title: "Present Progressive",
-                content: [
-                    ConjugationRow(
-                        label: "Plain Positive", values: verb.presentProgressivePlainPositive),
-                    ConjugationRow(
-                        label: "Polite Positive", values: verb.presentProgressivePolitePositive),
-                    ConjugationRow(
-                        label: "Polite Negative", values: verb.presentProgressivePoliteNegative),
-                ])
-        }
-    }
-
-    // Conditional section - only used for iOS
-    private var conditionalSection: some View {
-        VStack(alignment: .leading, spacing: 16) {
-            // Provisional Conditional (eba form)
-            ConjugationCard(
-                title: "Provisional Conditional (eba form)",
-                content: [
-                    ConjugationRow(
-                        label: "Positive", values: verb.provisionalConditionalPlainPositive),
-                    ConjugationRow(
-                        label: "Negative", values: verb.provisionalConditionalPlainNegative),
-                ])
-
-            // Conditional Tara form
-            HStack {
-                ConjugationCard(
-                    title: "Tara Form - Plain",
-                    content: [
-                        ConjugationRow(
-                            label: "Positive", values: verb.conditionalTaraPlainPositive),
-                        ConjugationRow(
-                            label: "Negative", values: verb.conditionalTaraPlainNegative),
-                    ])
-
-                Spacer()
-
-                ConjugationCard(
-                    title: "Tara Form - Polite",
-                    content: [
-                        ConjugationRow(
-                            label: "Positive", values: verb.conditionalTaraPolitePositive),
-                        ConjugationRow(
-                            label: "Negative", values: verb.conditionalTaraPoliteNegative),
-                    ])
-            }
-        }
-        .padding(.horizontal, 16)
     }
 }
 

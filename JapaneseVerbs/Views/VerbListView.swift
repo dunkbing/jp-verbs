@@ -31,6 +31,10 @@ struct VerbListView: View {
                 .padding(.horizontal)
                 .padding(.top, 8)
 
+                if !dataManager.selectedVerbs.isEmpty && !isSearchFocused {
+                    studyButton
+                }
+
                 if dataManager.isLoading {
                     loadingView
                 } else if let error = dataManager.error {
@@ -40,10 +44,8 @@ struct VerbListView: View {
                 } else {
                     verbsList
                 }
-            }
 
-            if !dataManager.selectedVerbs.isEmpty && !isSearchFocused {
-                studyButton
+                Spacer(minLength: 150)
             }
         }
         .background(Color.appBackground)

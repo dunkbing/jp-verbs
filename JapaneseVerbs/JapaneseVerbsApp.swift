@@ -86,7 +86,7 @@ struct JapaneseVerbsApp: App {
 
         if isCompatibleWithSwiftData {
             do {
-                let container = try await PersistenceManager.shared.modelContainer()
+                let container = try PersistenceManager.shared.modelContainer()
                 self.modelContainer = container
                 withAnimation {
                     self.isLoading = false
