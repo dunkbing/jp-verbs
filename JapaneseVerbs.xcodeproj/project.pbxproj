@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		C3C22D312DA2901900E19CD2 /* verbs.json in Resources */ = {isa = PBXBuildFile; fileRef = C3C22D302DA2901900E19CD2 /* verbs.json */; };
+		C3C22D3A2DA2A37500E19CD2 /* TikimUI in Frameworks */ = {isa = PBXBuildFile; productRef = C3C22D392DA2A37500E19CD2 /* TikimUI */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -28,6 +29,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				C3C22D3A2DA2A37500E19CD2 /* TikimUI in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -71,6 +73,7 @@
 			);
 			name = JapaneseVerbs;
 			packageProductDependencies = (
+				C3C22D392DA2A37500E19CD2 /* TikimUI */,
 			);
 			productName = JapaneseVerbs;
 			productReference = C3C22D092DA2847200E19CD2 /* JapaneseVerbs.app */;
@@ -100,6 +103,9 @@
 			);
 			mainGroup = C3C22D002DA2847200E19CD2;
 			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				C3C22D382DA2A37500E19CD2 /* XCLocalSwiftPackageReference "../TikimUI" */,
+			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = C3C22D0A2DA2847200E19CD2 /* Products */;
 			projectDirPath = "";
@@ -346,6 +352,20 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCLocalSwiftPackageReference section */
+		C3C22D382DA2A37500E19CD2 /* XCLocalSwiftPackageReference "../TikimUI" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = ../TikimUI;
+		};
+/* End XCLocalSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		C3C22D392DA2A37500E19CD2 /* TikimUI */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = TikimUI;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = C3C22D012DA2847200E19CD2 /* Project object */;
 }

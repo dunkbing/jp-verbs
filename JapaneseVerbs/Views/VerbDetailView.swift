@@ -85,7 +85,7 @@ struct VerbDetailView: View {
                     ConjugationRow(label: "Romaji", values: [verb.romaji]),
                     ConjugationRow(
                         label: "Japanese",
-                        values: !verb.presentIndicativePlainPositive.isEmpty
+                        values: verb.presentIndicativePlainPositive.count > 1
                             ? [verb.presentIndicativePlainPositive[1]] : []),
                 ])
 

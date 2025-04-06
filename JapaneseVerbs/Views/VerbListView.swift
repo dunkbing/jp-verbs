@@ -5,7 +5,15 @@
 //  Created by Bùi Đặng Bình on 6/4/25.
 //
 
+//
+//  VerbListView.swift
+//  JapaneseVerbs
+//
+//  Created by Bùi Đặng Bình on 6/4/25.
+//
+
 import SwiftUI
+import TikimUI
 
 struct VerbListView: View {
     @EnvironmentObject var dataManager: VerbDataManager
@@ -18,7 +26,7 @@ struct VerbListView: View {
 
     var body: some View {
         VStack {
-            SearchBar(text: $searchText)
+            SearchBar(text: $searchText, placeholder: "Search verbs")
                 .padding(.horizontal)
 
             if dataManager.isLoading {
@@ -58,7 +66,7 @@ struct VerbListView: View {
                         .font(.system(.headline, design: .rounded))
                         .padding()
                         .frame(maxWidth: .infinity)
-                        .background(Color.blue)
+                        .background(Color.appAccent)
                         .foregroundColor(.white)
                         .cornerRadius(10)
                 }
@@ -73,27 +81,60 @@ struct VerbListView: View {
 
 struct SearchBar: View {
     @Binding var text: String
+    var placeholder: String
+    var onCommit: (() -> Void)? = nil
+
+    // Animation states
+    @State private var isFocused: Bool = false
+    @FocusState private var isTextFieldFocused: Bool
 
     var body: some View {
-        HStack {
+        HStack(spacing: 10) {
             Image(systemName: "magnifyingglass")
-                .foregroundColor(.secondary)
+                .font(.system(size: 16, weight: .medium))
+                .foregroundColor(isFocused ? Color.appAccent : Color.appSubtitle)
+                .animation(.easeInOut(duration: 0.2), value: isFocused)
 
-            TextField("Search verbs", text: $text)
-                .disableAutocorrection(true)
+            TextField(placeholder, text: $text)
+                .foregroundColor(Color.appText)
+                .font(.system(size: 16))
+                .focused($isTextFieldFocused)
+                .onChange(of: isTextFieldFocused) { focused in
+                    withAnimation {
+                        isFocused = focused
+                    }
+                }
+                .submitLabel(.search)
+                .onSubmit {
+                    onCommit?()
+                }
 
             if !text.isEmpty {
                 Button(action: {
-                    text = ""
+                    withAnimation {
+                        text = ""
+                    }
                 }) {
                     Image(systemName: "xmark.circle.fill")
-                        .foregroundColor(.secondary)
+                        .font(.system(size: 16))
+                        .foregroundColor(Color.appSubtitle)
                 }
+                .transition(.opacity)
             }
         }
-        .padding(8)
-        .cornerRadius(10)
-        //        .background(Color(.systemGray6))
+        .padding(.vertical, 12)
+        .padding(.horizontal, 16)
+        .background(
+            RoundedRectangle(cornerRadius: 12)
+                .fill(Color.appSurface2.opacity(isFocused ? 0.15 : 0.1))
+                .overlay(
+                    RoundedRectangle(cornerRadius: 12)
+                        .stroke(
+                            isFocused ? Color.appAccent.opacity(0.5) : Color.clear, lineWidth: 1.5)
+                )
+        )
+        .animation(.easeInOut(duration: 0.2), value: isFocused)
+        .animation(.easeInOut(duration: 0.2), value: text)
     }
 }
 
