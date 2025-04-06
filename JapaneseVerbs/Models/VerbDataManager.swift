@@ -84,7 +84,9 @@ class VerbDataManager: ObservableObject {
             self.verbs = newVerbs
             self.isLoading = false
         } catch {
-            self.error = "Failed to load verbs from JSON: \(error.localizedDescription)"
+            let msg = "Failed to load verbs from JSON: \(error.localizedDescription)"
+            print(msg)
+            self.error = msg
             self.isLoading = false
         }
     }

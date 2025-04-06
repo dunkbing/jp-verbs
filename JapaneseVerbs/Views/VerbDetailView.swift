@@ -462,15 +462,137 @@ struct VerbDetailView: View {
         .padding(.vertical, 8)
     }
 
-    // macOS Conditional section (placeholder)
     private var macOSConditionalSection: some View {
-        HStack {
-            Text("Conditional forms would go here in a future update")
-                .foregroundColor(Color.appText)
-                .frame(maxWidth: .infinity, alignment: .leading)
-                .padding()
-                .background(Color.appSurface)
-                .cornerRadius(12)
+        VStack(spacing: 20) {
+            // Provisional Conditional (eba form)
+            HStack(alignment: .top, spacing: 16) {
+                VStack(alignment: .leading, spacing: 8) {
+                    Text("Provisional Conditional (eba form)")
+                        .font(.headline)
+                        .foregroundColor(Color.appText)
+
+                    VStack(alignment: .leading) {
+                        Text("Positive")
+                            .font(.subheadline)
+                            .foregroundColor(Color.appSubtitle)
+
+                        ForEach(verb.provisionalConditionalPlainPositive, id: \.self) { value in
+                            Text(value)
+                                .foregroundColor(Color.appText)
+                                .padding(4)
+                        }
+                    }
+                    .padding(8)
+                    .background(Color.appSurface)
+                    .cornerRadius(8)
+
+                    VStack(alignment: .leading) {
+                        Text("Negative")
+                            .font(.subheadline)
+                            .foregroundColor(Color.appSubtitle)
+
+                        ForEach(verb.provisionalConditionalPlainNegative, id: \.self) { value in
+                            Text(value)
+                                .foregroundColor(Color.appText)
+                                .padding(4)
+                        }
+                    }
+                    .padding(8)
+                    .background(Color.appSurface)
+                    .cornerRadius(8)
+                }
+                .frame(maxWidth: .infinity)
+
+                // Spacers to balance layout
+                Spacer()
+                    .frame(maxWidth: .infinity)
+
+                Spacer()
+                    .frame(maxWidth: .infinity)
+            }
+
+            // Conditional Tara form
+            HStack(alignment: .top, spacing: 16) {
+                // Plain Form
+                VStack(alignment: .leading, spacing: 8) {
+                    Text("Tara Form - Plain")
+                        .font(.headline)
+                        .foregroundColor(Color.appText)
+
+                    VStack(alignment: .leading) {
+                        Text("Positive")
+                            .font(.subheadline)
+                            .foregroundColor(Color.appSubtitle)
+
+                        ForEach(verb.conditionalTaraPlainPositive, id: \.self) { value in
+                            Text(value)
+                                .foregroundColor(Color.appText)
+                                .padding(4)
+                        }
+                    }
+                    .padding(8)
+                    .background(Color.appSurface)
+                    .cornerRadius(8)
+
+                    VStack(alignment: .leading) {
+                        Text("Negative")
+                            .font(.subheadline)
+                            .foregroundColor(Color.appSubtitle)
+
+                        ForEach(verb.conditionalTaraPlainNegative, id: \.self) { value in
+                            Text(value)
+                                .foregroundColor(Color.appText)
+                                .padding(4)
+                        }
+                    }
+                    .padding(8)
+                    .background(Color.appSurface)
+                    .cornerRadius(8)
+                }
+                .frame(maxWidth: .infinity)
+
+                // Polite Form
+                VStack(alignment: .leading, spacing: 8) {
+                    Text("Tara Form - Polite")
+                        .font(.headline)
+                        .foregroundColor(Color.appText)
+
+                    VStack(alignment: .leading) {
+                        Text("Positive")
+                            .font(.subheadline)
+                            .foregroundColor(Color.appSubtitle)
+
+                        ForEach(verb.conditionalTaraPolitePositive, id: \.self) { value in
+                            Text(value)
+                                .foregroundColor(Color.appText)
+                                .padding(4)
+                        }
+                    }
+                    .padding(8)
+                    .background(Color.appSurface)
+                    .cornerRadius(8)
+
+                    VStack(alignment: .leading) {
+                        Text("Negative")
+                            .font(.subheadline)
+                            .foregroundColor(Color.appSubtitle)
+
+                        ForEach(verb.conditionalTaraPoliteNegative, id: \.self) { value in
+                            Text(value)
+                                .foregroundColor(Color.appText)
+                                .padding(4)
+                        }
+                    }
+                    .padding(8)
+                    .background(Color.appSurface)
+                    .cornerRadius(8)
+                }
+                .frame(maxWidth: .infinity)
+
+                // Spacer to balance the layout
+                Spacer()
+                    .frame(maxWidth: .infinity)
+            }
         }
         .padding(.vertical, 8)
     }
@@ -608,13 +730,40 @@ struct VerbDetailView: View {
     // Conditional section - only used for iOS
     private var conditionalSection: some View {
         VStack(alignment: .leading, spacing: 16) {
-            Text("Conditional forms would go here in a future update")
-                .foregroundColor(Color.appText)
-                .frame(maxWidth: .infinity, alignment: .leading)
-                .padding()
-                .background(Color.appSurface)
-                .cornerRadius(12)
+            // Provisional Conditional (eba form)
+            ConjugationCard(
+                title: "Provisional Conditional (eba form)",
+                content: [
+                    ConjugationRow(
+                        label: "Positive", values: verb.provisionalConditionalPlainPositive),
+                    ConjugationRow(
+                        label: "Negative", values: verb.provisionalConditionalPlainNegative),
+                ])
+
+            // Conditional Tara form
+            HStack {
+                ConjugationCard(
+                    title: "Tara Form - Plain",
+                    content: [
+                        ConjugationRow(
+                            label: "Positive", values: verb.conditionalTaraPlainPositive),
+                        ConjugationRow(
+                            label: "Negative", values: verb.conditionalTaraPlainNegative),
+                    ])
+
+                Spacer()
+
+                ConjugationCard(
+                    title: "Tara Form - Polite",
+                    content: [
+                        ConjugationRow(
+                            label: "Positive", values: verb.conditionalTaraPolitePositive),
+                        ConjugationRow(
+                            label: "Negative", values: verb.conditionalTaraPoliteNegative),
+                    ])
+            }
         }
+        .padding(.horizontal, 16)
     }
 }
 

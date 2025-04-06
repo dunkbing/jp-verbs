@@ -36,7 +36,16 @@ final class Verb: Identifiable {
     var presentProgressivePolitePositive: [String]
     var presentProgressivePoliteNegative: [String]
 
-    // Add more properties for the complete verb conjugation
+    // Provisional conditional (eba form)
+    var provisionalConditionalPlainPositive: [String]
+    var provisionalConditionalPlainNegative: [String]
+
+    // Conditional tara form
+    var conditionalTaraPlainPositive: [String]
+    var conditionalTaraPlainNegative: [String]
+    var conditionalTaraPolitePositive: [String]
+    var conditionalTaraPoliteNegative: [String]
+
     var isSelected: Bool = false
 
     init(
@@ -48,7 +57,11 @@ final class Verb: Identifiable {
         pastIndicativePlainPositive: [String], pastIndicativePlainNegative: [String],
         pastIndicativePolitePositive: [String], pastIndicativePoliteNegative: [String],
         presentProgressivePlainPositive: [String], presentProgressivePolitePositive: [String],
-        presentProgressivePoliteNegative: [String]
+        presentProgressivePoliteNegative: [String],
+        provisionalConditionalPlainPositive: [String],
+        provisionalConditionalPlainNegative: [String],
+        conditionalTaraPlainPositive: [String], conditionalTaraPlainNegative: [String],
+        conditionalTaraPolitePositive: [String], conditionalTaraPoliteNegative: [String]
     ) {
         self.id = id
         self.verbClass = verbClass
@@ -69,6 +82,12 @@ final class Verb: Identifiable {
         self.presentProgressivePlainPositive = presentProgressivePlainPositive
         self.presentProgressivePolitePositive = presentProgressivePolitePositive
         self.presentProgressivePoliteNegative = presentProgressivePoliteNegative
+        self.provisionalConditionalPlainPositive = provisionalConditionalPlainPositive
+        self.provisionalConditionalPlainNegative = provisionalConditionalPlainNegative
+        self.conditionalTaraPlainPositive = conditionalTaraPlainPositive
+        self.conditionalTaraPlainNegative = conditionalTaraPlainNegative
+        self.conditionalTaraPolitePositive = conditionalTaraPolitePositive
+        self.conditionalTaraPoliteNegative = conditionalTaraPoliteNegative
     }
 }
 
@@ -84,6 +103,8 @@ extension Verb {
         let present_indicative: ConjugationSection
         let past_indicative: ConjugationSection
         let present_progressive: ConjugationSection?
+        let provisional_conditional_eba: ConjugationSection?
+        let conditional_tara_form: ConjugationSection?
 
         struct ConjugationSection: Codable {
             let plain: ConjugationOptions
@@ -102,6 +123,7 @@ extension Verb {
         }
     }
 
+    // Update the fromJSON method to map the conditional form data
     static func fromJSON(_ json: VerbJSON) -> Verb {
         return Verb(
             id: json.id,
@@ -122,7 +144,15 @@ extension Verb {
             pastIndicativePoliteNegative: json.past_indicative.polite.negative,
             presentProgressivePlainPositive: json.present_progressive?.plain.positive ?? [],
             presentProgressivePolitePositive: json.present_progressive?.polite.positive ?? [],
-            presentProgressivePoliteNegative: json.present_progressive?.polite.negative ?? []
+            presentProgressivePoliteNegative: json.present_progressive?.polite.negative ?? [],
+            provisionalConditionalPlainPositive: json.provisional_conditional_eba?.plain.positive
+                ?? [],
+            provisionalConditionalPlainNegative: json.provisional_conditional_eba?.plain.negative
+                ?? [],
+            conditionalTaraPlainPositive: json.conditional_tara_form?.plain.positive ?? [],
+            conditionalTaraPlainNegative: json.conditional_tara_form?.plain.negative ?? [],
+            conditionalTaraPolitePositive: json.conditional_tara_form?.polite.positive ?? [],
+            conditionalTaraPoliteNegative: json.conditional_tara_form?.polite.negative ?? []
         )
     }
 }
