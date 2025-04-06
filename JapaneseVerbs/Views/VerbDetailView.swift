@@ -17,7 +17,6 @@ struct VerbDetailView: View {
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 20) {
-                // Header
                 VStack(alignment: .leading, spacing: 8) {
                     HStack {
                         Text(verb.romaji)
@@ -44,7 +43,7 @@ struct VerbDetailView: View {
                         .padding(.top, 4)
                 }
                 .padding()
-                .background(Color(.systemGray6))
+                //                .background(Color(.systemGray6))
                 .cornerRadius(12)
 
                 // Section selector
@@ -168,7 +167,7 @@ struct VerbDetailView: View {
         Text("Conditional forms would go here")
             .frame(maxWidth: .infinity, alignment: .center)
             .padding()
-            .background(Color(.systemGray6))
+            //            .background(Color(.systemGray6))
             .cornerRadius(12)
     }
 }
@@ -197,7 +196,7 @@ struct ConjugationCard: View {
             }
         }
         .padding()
-        .background(Color(.systemGray6))
+        //        .background(Color(.systemGray6))
         .cornerRadius(12)
     }
 }

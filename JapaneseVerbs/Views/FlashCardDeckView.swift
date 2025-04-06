@@ -27,112 +27,7 @@ struct FlashCardDeckView: View {
             if dataManager.verbs.isEmpty {
                 ProgressView("Loading verbs...")
             } else {
-                ScrollView {
-                    VStack(alignment: .leading, spacing: 20) {
-                        GroupBox(label: Text("Setup Flash Cards").font(.headline)) {
-                            VStack(alignment: .leading, spacing: 16) {
-                                Stepper(
-                                    "Number of Verbs: \(numberOfVerbs)", value: $numberOfVerbs,
-                                    in: 5...50, step: 5)
-
-                                Divider()
-
-                                Text("Card Mode:")
-                                    .font(.subheadline)
-
-                                Picker("Flash Card Mode", selection: $selectedMode) {
-                                    ForEach(FlashCardMode.allCases) { mode in
-                                        Text(mode.rawValue).tag(mode)
-                                    }
-                                }
-                                .pickerStyle(SegmentedPickerStyle())
-                            }
-                            .padding(.vertical, 8)
-                        }
-                        .padding(.horizontal)
-
-                        // Selected Verb List
-                        if !dataManager.selectedVerbs.isEmpty {
-                            GroupBox(
-                                label: Text("Selected Verbs (\(dataManager.selectedVerbs.count))")
-                                    .font(.headline)
-                            ) {
-                                VStack(alignment: .leading) {
-                                    ScrollView(.horizontal, showsIndicators: false) {
-                                        HStack(spacing: 8) {
-                                            ForEach(dataManager.selectedVerbs) { verb in
-                                                HStack {
-                                                    Text(verb.romaji)
-                                                        .lineLimit(1)
-
-                                                    Button(action: {
-                                                        dataManager.toggleVerbSelection(verb)
-                                                    }) {
-                                                        Image(systemName: "xmark.circle.fill")
-                                                            .foregroundColor(.red)
-                                                    }
-                                                }
-                                                .padding(.vertical, 4)
-                                                .padding(.horizontal, 8)
-                                                .background(Color(.systemGray5))
-                                                .cornerRadius(8)
-                                            }
-                                        }
-                                        .padding(.vertical, 8)
-                                    }
-
-                                    Button(action: {
-                                        showingFlashCards = true
-                                        selectedCards = dataManager.selectedVerbs
-                                    }) {
-                                        Label("Study Selected Verbs", systemImage: "play.fill")
-                                            .frame(maxWidth: .infinity)
-                                            .padding()
-                                            .background(Color.blue)
-                                            .foregroundColor(.white)
-                                            .cornerRadius(10)
-                                    }
-                                    .padding(.top, 8)
-                                }
-                                .padding(.vertical, 8)
-                            }
-                            .padding(.horizontal)
-                        }
-
-                        // Random Verbs Option
-                        GroupBox(label: Text("Quick Study").font(.headline)) {
-                            Button(action: {
-                                showingFlashCards = true
-                                selectedCards = Array(
-                                    dataManager.verbs.shuffled().prefix(numberOfVerbs))
-                            }) {
-                                Label(
-                                    "Start with \(numberOfVerbs) Random Verbs",
-                                    systemImage: "shuffle"
-                                )
-                                .frame(maxWidth: .infinity)
-                                .padding()
-                                .background(Color.green)
-                                .foregroundColor(.white)
-                                .cornerRadius(10)
-                            }
-                            .padding(.vertical, 8)
-                        }
-                        .padding(.horizontal)
-
-                        // Selection guide
-                        GroupBox(label: Text("Tip").font(.headline)) {
-                            Text(
-                                "You can select verbs for study from the Browse tab. Swipe left on a verb or tap the star in its detail view to add it to your study deck."
-                            )
-                            .font(.subheadline)
-                            .foregroundColor(.secondary)
-                            .padding(.vertical, 8)
-                        }
-                        .padding(.horizontal)
-                    }
-                    .padding(.vertical)
-                }
+                mainContent
             }
         }
         .sheet(isPresented: $showingFlashCards) {
@@ -140,6 +35,148 @@ struct FlashCardDeckView: View {
                 FlashCardView(verbs: selectedCards, mode: selectedMode)
             }
         }
+    }
+
+    // MARK: - Extracted Views
+
+    private var mainContent: some View {
+        ScrollView {
+            VStack(alignment: .leading, spacing: 20) {
+                setupSection
+
+                // Selected Verb List
+                if !dataManager.selectedVerbs.isEmpty {
+                    selectedVerbsSection
+                }
+
+                // Random Verbs Option
+                quickStudySection
+
+                // Selection guide
+                tipSection
+            }
+            .padding(.vertical)
+        }
+    }
+
+    private var setupSection: some View {
+        GroupBox(label: Text("Setup Flash Cards").font(.headline)) {
+            VStack(alignment: .leading, spacing: 16) {
+                Stepper(
+                    "Number of Verbs: \(numberOfVerbs)",
+                    value: $numberOfVerbs,
+                    in: 5...50,
+                    step: 5
+                )
+
+                Divider()
+
+                Text("Card Mode:")
+                    .font(.subheadline)
+
+                Picker("Flash Card Mode", selection: $selectedMode) {
+                    ForEach(FlashCardMode.allCases) { mode in
+                        Text(mode.rawValue).tag(mode)
+                    }
+                }
+                .pickerStyle(SegmentedPickerStyle())
+            }
+            .padding(.vertical, 8)
+        }
+        .padding(.horizontal)
+    }
+
+    private var selectedVerbsSection: some View {
+        GroupBox(
+            label: Text("Selected Verbs (\(dataManager.selectedVerbs.count))")
+                .font(.headline)
+        ) {
+            VStack(alignment: .leading) {
+                selectedVerbsScrollView
+
+                startStudyButton
+            }
+            .padding(.vertical, 8)
+        }
+        .padding(.horizontal)
+    }
+
+    private var selectedVerbsScrollView: some View {
+        ScrollView(.horizontal, showsIndicators: false) {
+            HStack(spacing: 8) {
+                ForEach(dataManager.selectedVerbs) { verb in
+                    selectedVerbChip(for: verb)
+                }
+            }
+            .padding(.vertical, 8)
+        }
+    }
+
+    private func selectedVerbChip(for verb: Verb) -> some View {
+        HStack {
+            Text(verb.romaji)
+                .lineLimit(1)
+
+            Button(action: {
+                dataManager.toggleVerbSelection(verb)
+            }) {
+                Image(systemName: "xmark.circle.fill")
+                    .foregroundColor(.red)
+            }
+        }
+        .padding(.vertical, 4)
+        .padding(.horizontal, 8)
+        //        .background(.systemGray5)
+        .cornerRadius(8)
+    }
+
+    private var startStudyButton: some View {
+        Button(action: {
+            showingFlashCards = true
+            selectedCards = dataManager.selectedVerbs
+        }) {
+            Label("Study Selected Verbs", systemImage: "play.fill")
+                .frame(maxWidth: .infinity)
+                .padding()
+                .background(Color.blue)
+                .foregroundColor(.white)
+                .cornerRadius(10)
+        }
+        .padding(.top, 8)
+    }
+
+    private var quickStudySection: some View {
+        GroupBox(label: Text("Quick Study").font(.headline)) {
+            Button(action: {
+                showingFlashCards = true
+                selectedCards = Array(
+                    dataManager.verbs.shuffled().prefix(numberOfVerbs))
+            }) {
+                Label(
+                    "Start with \(numberOfVerbs) Random Verbs",
+                    systemImage: "shuffle"
+                )
+                .frame(maxWidth: .infinity)
+                .padding()
+                .background(Color.green)
+                .foregroundColor(.white)
+                .cornerRadius(10)
+            }
+            .padding(.vertical, 8)
+        }
+        .padding(.horizontal)
+    }
+
+    private var tipSection: some View {
+        GroupBox(label: Text("Tip").font(.headline)) {
+            Text(
+                "You can select verbs for study from the Browse tab. Swipe left on a verb or tap the star in its detail view to add it to your study deck."
+            )
+            .font(.subheadline)
+            .foregroundColor(.secondary)
+            .padding(.vertical, 8)
+        }
+        .padding(.horizontal)
     }
 }
 
@@ -316,7 +353,9 @@ struct FlashCardView: View {
             }
         }
         .navigationTitle("Flash Cards")
-        .navigationBarTitleDisplayMode(.inline)
+        #if os(iOS)
+            .navigationBarTitleDisplayMode(.inline)
+        #endif
     }
 
     // Helper methods for the flash card content

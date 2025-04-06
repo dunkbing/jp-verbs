@@ -45,7 +45,9 @@ struct VerbListView: View {
                         }
                     }
                 }
-                .listStyle(InsetGroupedListStyle())
+                #if os(iOS)
+                    .listStyle(InsetGroupedListStyle())
+                #endif
             }
 
             if !dataManager.selectedVerbs.isEmpty {
@@ -90,8 +92,8 @@ struct SearchBar: View {
             }
         }
         .padding(8)
-        .background(Color(.systemGray6))
         .cornerRadius(10)
+        //        .background(Color(.systemGray6))
     }
 }
 
