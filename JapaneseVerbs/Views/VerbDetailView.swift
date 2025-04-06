@@ -18,9 +18,9 @@ struct VerbDetailView: View {
 
     var body: some View {
         #if os(iOS)
-        iOSLayout
+            iOSLayout
         #else
-        macOSLayout
+            macOSLayout
         #endif
     }
 
@@ -512,23 +512,27 @@ struct VerbDetailView: View {
     // Basic info section - only used for iOS
     private var basicInfoSection: some View {
         VStack(alignment: .leading, spacing: 16) {
-            ConjugationCard(
-                title: "Dictionary Form",
-                content: [
-                    ConjugationRow(label: "Romaji", values: [verb.romaji]),
-                    ConjugationRow(
-                        label: "Japanese",
-                        values: verb.presentIndicativePlainPositive.count > 1
-                            ? [verb.presentIndicativePlainPositive[1]] : []),
-                ])
+            HStack {
+                ConjugationCard(
+                    title: "Dictionary Form",
+                    content: [
+                        ConjugationRow(label: "Romaji", values: [verb.romaji]),
+                        ConjugationRow(
+                            label: "Japanese",
+                            values: verb.presentIndicativePlainPositive.count > 1
+                                ? [verb.presentIndicativePlainPositive[1]] : []),
+                    ])
 
-            ConjugationCard(
-                title: "Stem & Infinitive",
-                content: [
-                    ConjugationRow(label: "Stem", values: [verb.stem]),
-                    ConjugationRow(label: "Infinitive", values: [verb.infinitive]),
-                    ConjugationRow(label: "Te Form", values: [verb.teForm]),
-                ])
+                Spacer()
+
+                ConjugationCard(
+                    title: "Stem & Infinitive",
+                    content: [
+                        ConjugationRow(label: "Stem", values: [verb.stem]),
+                        ConjugationRow(label: "Infinitive", values: [verb.infinitive]),
+                        ConjugationRow(label: "Te Form", values: [verb.teForm]),
+                    ])
+            }
 
             ConjugationCard(
                 title: "Meaning",
@@ -539,17 +543,20 @@ struct VerbDetailView: View {
                         label: "Negative", values: [verb.presentIndicativeMeaningNegative]),
                 ])
         }
+        .padding(.horizontal, 16)
     }
 
     // Present indicative section - only used for iOS
     private var presentIndicativeSection: some View {
-        VStack(alignment: .leading, spacing: 16) {
+        HStack {
             ConjugationCard(
                 title: "Plain Form",
                 content: [
                     ConjugationRow(label: "Positive", values: verb.presentIndicativePlainPositive),
                     ConjugationRow(label: "Negative", values: verb.presentIndicativePlainNegative),
                 ])
+
+            Spacer()
 
             ConjugationCard(
                 title: "Polite Form",
@@ -558,11 +565,12 @@ struct VerbDetailView: View {
                     ConjugationRow(label: "Negative", values: verb.presentIndicativePoliteNegative),
                 ])
         }
+        .padding(.horizontal, 20)
     }
 
     // Past indicative section - only used for iOS
     private var pastIndicativeSection: some View {
-        VStack(alignment: .leading, spacing: 16) {
+        HStack {
             ConjugationCard(
                 title: "Plain Form",
                 content: [
@@ -570,13 +578,15 @@ struct VerbDetailView: View {
                     ConjugationRow(label: "Negative", values: verb.pastIndicativePlainNegative),
                 ])
 
+            Spacer()
+
             ConjugationCard(
                 title: "Polite Form",
                 content: [
                     ConjugationRow(label: "Positive", values: verb.pastIndicativePolitePositive),
                     ConjugationRow(label: "Negative", values: verb.pastIndicativePoliteNegative),
                 ])
-        }
+        }.padding(.horizontal, 16)
     }
 
     // Progressive section - only used for iOS
