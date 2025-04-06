@@ -5,9 +5,9 @@
 //  Created by Bùi Đặng Bình on 6/4/25.
 //
 
+import Combine
 import Foundation
 import SwiftData
-import Combine
 
 @MainActor
 class VerbDataManager: ObservableObject {
@@ -110,8 +110,7 @@ class VerbDataManager: ObservableObject {
             let romaji = verb.romaji.lowercased()
             let meaning = verb.presentIndicativeMeaningPositive.lowercased()
 
-            return romaji.contains(text.lowercased()) ||
-                   meaning.contains(text.lowercased())
+            return romaji.contains(text.lowercased()) || meaning.contains(text.lowercased())
         }
     }
 }

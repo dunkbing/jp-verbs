@@ -5,8 +5,9 @@
 //  Created by Bùi Đặng Bình on 6/4/25.
 //
 
-
 import Foundation
+// Backwards compatibility for ViewModifier
+import SwiftUI
 
 // This file provides backwards compatibility for SwiftData models
 // when running on iOS 15/macOS 12
@@ -25,7 +26,7 @@ struct LegacyVerb: Identifiable, Codable, ModelProtocol {
     var teForm: String
     var infinitive: String
     var romaji: String
-    
+
     // Present indicative
     var presentIndicativePlainPositive: [String]
     var presentIndicativePlainNegative: [String]
@@ -33,20 +34,20 @@ struct LegacyVerb: Identifiable, Codable, ModelProtocol {
     var presentIndicativePoliteNegative: [String]
     var presentIndicativeMeaningPositive: String
     var presentIndicativeMeaningNegative: String
-    
+
     // Past indicative
     var pastIndicativePlainPositive: [String]
     var pastIndicativePlainNegative: [String]
     var pastIndicativePolitePositive: [String]
     var pastIndicativePoliteNegative: [String]
-    
+
     // Te form related
     var presentProgressivePlainPositive: [String]
     var presentProgressivePolitePositive: [String]
     var presentProgressivePoliteNegative: [String]
-    
+
     var isSelected: Bool = false
-    
+
     init(from verbJSON: Verb.VerbJSON) {
         self.id = verbJSON.id
         self.verbClass = verbJSON.class
@@ -73,22 +74,19 @@ struct LegacyVerb: Identifiable, Codable, ModelProtocol {
 // Mock ModelContext for backward compatibility
 class MockModelContext {
     private var storage: [String: Any] = [:]
-    
+
     func insert<T: ModelProtocol>(_ model: T) {
         storage[model.id] = model
     }
-    
+
     func delete<T: ModelProtocol>(_ model: T) {
         storage.removeValue(forKey: model.id)
     }
-    
+
     func save() throws {
         // In the mock implementation, we don't need to do anything
     }
 }
-
-// Backwards compatibility for ViewModifier
-import SwiftUI
 
 struct ModelContainerModifier: ViewModifier {
     func body(content: Content) -> some View {

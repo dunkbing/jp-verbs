@@ -5,8 +5,8 @@
 //  Created by Bùi Đặng Bình on 6/4/25.
 //
 
-import Foundation
 import Combine
+import Foundation
 
 // A version of the data manager that works on iOS 15/macOS 12
 // This is a fallback for older systems that don't support SwiftData
@@ -77,8 +77,7 @@ class LegacyVerbDataManager: ObservableObject {
             let romaji = verb.romaji.lowercased()
             let meaning = verb.presentIndicativeMeaningPositive.lowercased()
 
-            return romaji.contains(text.lowercased()) ||
-                   meaning.contains(text.lowercased())
+            return romaji.contains(text.lowercased()) || meaning.contains(text.lowercased())
         }
     }
 }

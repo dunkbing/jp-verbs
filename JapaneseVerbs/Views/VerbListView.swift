@@ -11,16 +11,16 @@ struct VerbListView: View {
     @EnvironmentObject var dataManager: VerbDataManager
     @Binding var searchText: String
     @State private var showingAddToFlashcards = false
-    
+
     var filteredVerbs: [Verb] {
         dataManager.search(text: searchText)
     }
-    
+
     var body: some View {
         VStack {
             SearchBar(text: $searchText)
                 .padding(.horizontal)
-            
+
             if dataManager.isLoading {
                 ProgressView("Loading verbs...")
             } else if let error = dataManager.error {
@@ -47,7 +47,7 @@ struct VerbListView: View {
                 }
                 .listStyle(InsetGroupedListStyle())
             }
-            
+
             if !dataManager.selectedVerbs.isEmpty {
                 Button(action: {
                     showingAddToFlashcards = true
@@ -71,15 +71,15 @@ struct VerbListView: View {
 
 struct SearchBar: View {
     @Binding var text: String
-    
+
     var body: some View {
         HStack {
             Image(systemName: "magnifyingglass")
                 .foregroundColor(.secondary)
-            
+
             TextField("Search verbs", text: $text)
                 .disableAutocorrection(true)
-            
+
             if !text.isEmpty {
                 Button(action: {
                     text = ""
@@ -97,29 +97,29 @@ struct SearchBar: View {
 
 struct VerbRowView: View {
     let verb: Verb
-    
+
     var body: some View {
         HStack {
             VStack(alignment: .leading, spacing: 4) {
                 HStack {
                     Text(verb.romaji)
                         .font(.headline)
-                    
+
                     if !verb.presentIndicativePlainPositive.isEmpty {
                         Text(verb.presentIndicativePlainPositive[0])
                             .font(.subheadline)
                             .foregroundColor(.secondary)
                     }
                 }
-                
+
                 Text(verb.presentIndicativeMeaningPositive)
                     .font(.caption)
                     .foregroundColor(.secondary)
                     .lineLimit(1)
             }
-            
+
             Spacer()
-            
+
             if verb.isSelected {
                 Image(systemName: "checkmark.circle.fill")
                     .foregroundColor(.green)
@@ -132,16 +132,16 @@ struct VerbRowView: View {
 struct ErrorView: View {
     let message: String
     let retryAction: () -> Void
-    
+
     var body: some View {
         VStack(spacing: 16) {
             Image(systemName: "exclamationmark.triangle")
                 .font(.largeTitle)
                 .foregroundColor(.red)
-            
+
             Text(message)
                 .multilineTextAlignment(.center)
-            
+
             Button("Retry", action: retryAction)
                 .buttonStyle(.borderedProminent)
         }

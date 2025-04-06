@@ -5,9 +5,8 @@
 //  Created by Bùi Đặng Bình on 6/4/25.
 //
 
-
-import SwiftUI
 import SwiftData
+import SwiftUI
 
 @main
 struct JapaneseVerbsApp: App {
@@ -15,9 +14,9 @@ struct JapaneseVerbsApp: App {
         WindowGroup {
             AppContentView()
         }
-#if os(macOS)
-        .windowStyle(.titleBar)
-        .windowToolbarStyle(.unified)
+        #if os(macOS)
+            .windowStyle(.titleBar)
+            .windowToolbarStyle(.unified)
         #endif
     }
 }

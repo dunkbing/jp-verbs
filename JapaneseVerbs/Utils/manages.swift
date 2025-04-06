@@ -5,17 +5,16 @@
 //  Created by Bùi Đặng Bình on 6/4/25.
 //
 
-
 import Foundation
-import SwiftUI
 import SwiftData
+import SwiftUI
 
 // This class manages the database versioning, migration, etc.
 @MainActor
 class PersistenceManager {
     static let shared = PersistenceManager()
 
-    private init() { }
+    private init() {}
 
     func modelContainer() throws -> ModelContainer {
         let schema = Schema([Verb.self])
@@ -41,11 +40,13 @@ class PersistenceManager {
 // SwiftData only supports iOS 17 and macOS 14, so for backward compatibility
 // This is a mock implementation for iOS 15/macOS 12
 #if os(iOS)
-import UIKit
-let isCompatibleWithSwiftData = UIDevice.current.systemVersion.compare("17.0", options: .numeric) != .orderedAscending
+    import UIKit
+    let isCompatibleWithSwiftData =
+        UIDevice.current.systemVersion.compare("17.0", options: .numeric) != .orderedAscending
 #elseif os(macOS)
-import AppKit
-let isCompatibleWithSwiftData = ProcessInfo.processInfo.operatingSystemVersion.majorVersion >= 14
+    import AppKit
+    let isCompatibleWithSwiftData =
+        ProcessInfo.processInfo.operatingSystemVersion.majorVersion >= 14
 #endif
 
 // For devices that don't support SwiftData - these methods are explicitly nonisolated

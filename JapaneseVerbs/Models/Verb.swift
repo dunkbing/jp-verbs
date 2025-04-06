@@ -16,7 +16,7 @@ final class Verb: Identifiable {
     var teForm: String
     var infinitive: String
     var romaji: String
-    
+
     // Present indicative
     var presentIndicativePlainPositive: [String]
     var presentIndicativePlainNegative: [String]
@@ -24,29 +24,32 @@ final class Verb: Identifiable {
     var presentIndicativePoliteNegative: [String]
     var presentIndicativeMeaningPositive: String
     var presentIndicativeMeaningNegative: String
-    
+
     // Past indicative
     var pastIndicativePlainPositive: [String]
     var pastIndicativePlainNegative: [String]
     var pastIndicativePolitePositive: [String]
     var pastIndicativePoliteNegative: [String]
-    
+
     // Te form related
     var presentProgressivePlainPositive: [String]
     var presentProgressivePolitePositive: [String]
     var presentProgressivePoliteNegative: [String]
-    
+
     // Add more properties for the complete verb conjugation
     var isSelected: Bool = false
-    
-    init(id: String, verbClass: String, stem: String, teForm: String, infinitive: String, romaji: String,
-         presentIndicativePlainPositive: [String], presentIndicativePlainNegative: [String],
-         presentIndicativePolitePositive: [String], presentIndicativePoliteNegative: [String],
-         presentIndicativeMeaningPositive: String, presentIndicativeMeaningNegative: String,
-         pastIndicativePlainPositive: [String], pastIndicativePlainNegative: [String],
-         pastIndicativePolitePositive: [String], pastIndicativePoliteNegative: [String],
-         presentProgressivePlainPositive: [String], presentProgressivePolitePositive: [String],
-         presentProgressivePoliteNegative: [String]) {
+
+    init(
+        id: String, verbClass: String, stem: String, teForm: String, infinitive: String,
+        romaji: String,
+        presentIndicativePlainPositive: [String], presentIndicativePlainNegative: [String],
+        presentIndicativePolitePositive: [String], presentIndicativePoliteNegative: [String],
+        presentIndicativeMeaningPositive: String, presentIndicativeMeaningNegative: String,
+        pastIndicativePlainPositive: [String], pastIndicativePlainNegative: [String],
+        pastIndicativePolitePositive: [String], pastIndicativePoliteNegative: [String],
+        presentProgressivePlainPositive: [String], presentProgressivePolitePositive: [String],
+        presentProgressivePoliteNegative: [String]
+    ) {
         self.id = id
         self.verbClass = verbClass
         self.stem = stem
@@ -86,19 +89,19 @@ extension Verb {
             let plain: ConjugationOptions
             let polite: ConjugationOptions
             let meaning: ConjugationMeaning
-            
+
             struct ConjugationOptions: Codable {
                 let positive: [String]
                 let negative: [String]
             }
-            
+
             struct ConjugationMeaning: Codable {
                 let positive: String
                 let negative: String
             }
         }
     }
-    
+
     static func fromJSON(_ json: VerbJSON) -> Verb {
         return Verb(
             id: json.id,
