@@ -48,7 +48,7 @@ class VerbDataManager: ObservableObject {
 
             if existingVerbs.isEmpty {
                 // Load from JSON file if no verbs in the database
-                loadVerbsFromJSON(context: context)
+                try loadVerbsFromJSON(context: context)
             } else {
                 self.verbs = existingVerbs
                 loadSelectedVerbs(context: context)
@@ -73,39 +73,31 @@ class VerbDataManager: ObservableObject {
         }
     }
 
-    private func loadVerbsFromJSON(context: ModelContext) {
+    private func loadVerbsFromJSON(context: ModelContext) throws {
         guard let url = Bundle.main.url(forResource: "verbs", withExtension: "json") else {
-            self.error = "verbs.json file not found"
-            self.isLoading = false
-            return
+            throw NSError(
+                domain: "VerbDataManager", code: 404,
+                userInfo: [NSLocalizedDescriptionKey: "verbs.json file not found"])
         }
 
-        do {
-            let data = try Data(contentsOf: url)
-            let decoder = JSONDecoder()
-            let verbJSONs = try decoder.decode([Verb.VerbJSON].self, from: data)
+        let data = try Data(contentsOf: url)
+        let decoder = JSONDecoder()
+        let verbJSONs = try decoder.decode([Verb.VerbJSON].self, from: data)
 
-            var newVerbs: [Verb] = []
+        var newVerbs: [Verb] = []
 
-            for verbJSON in verbJSONs {
-                let verb = Verb.fromJSON(verbJSON)
-                context.insert(verb)
-                newVerbs.append(verb)
-            }
-
-            try context.save()
-
-            self.verbs = newVerbs
-
-            loadSelectedVerbs(context: context)
-
-            self.isLoading = false
-        } catch {
-            let msg = "Failed to load verbs from JSON: \(error.localizedDescription)"
-            print(msg)
-            self.error = msg
-            self.isLoading = false
+        for verbJSON in verbJSONs {
+            let verb = Verb.fromJSON(verbJSON)
+            context.insert(verb)
+            newVerbs.append(verb)
         }
+
+        try context.save()
+
+        self.verbs = newVerbs
+        loadSelectedVerbs(context: context)
+
+        self.isLoading = false
     }
 
     func toggleVerbSelection(_ verb: Verb) {
@@ -131,68 +123,37 @@ class VerbDataManager: ObservableObject {
         let searchText = text.lowercased()
 
         return verbs.filter { verb in
-            // Romaji
-            if verb.romaji.lowercased().contains(searchText) {
-                return true
-            }
-
-            // Meanings
-            if verb.presentIndicativeMeaningPositive.lowercased().contains(searchText)
+            // Comprehensive search across multiple fields
+            return verb.romaji.lowercased().contains(searchText)
+                || verb.presentIndicativeMeaningPositive.lowercased().contains(searchText)
                 || verb.presentIndicativeMeaningNegative.lowercased().contains(searchText)
-            {
-                return true
-            }
-
-            // Japanese forms (plain forms)
-            if verb.presentIndicativePlainPositive.contains(where: {
-                $0.lowercased().contains(searchText)
-            })
-                || verb.presentIndicativePlainNegative.contains(where: {
+                || verb.presentIndicativePlainPositive.contains {
                     $0.lowercased().contains(searchText)
-                })
-            {
-                return true
-            }
-
-            // Polite forms
-            if verb.presentIndicativePolitePositive.contains(where: {
-                $0.lowercased().contains(searchText)
-            })
-                || verb.presentIndicativePoliteNegative.contains(where: {
+                }
+                || verb.presentIndicativePlainNegative.contains {
                     $0.lowercased().contains(searchText)
-                })
-            {
-                return true
-            }
-
-            // Past forms
-            if verb.pastIndicativePlainPositive.contains(where: {
-                $0.lowercased().contains(searchText)
-            })
-                || verb.pastIndicativePlainNegative.contains(where: {
+                }
+                || verb.presentIndicativePolitePositive.contains {
                     $0.lowercased().contains(searchText)
-                })
-                || verb.pastIndicativePolitePositive.contains(where: {
+                }
+                || verb.presentIndicativePoliteNegative.contains {
                     $0.lowercased().contains(searchText)
-                })
-                || verb.pastIndicativePoliteNegative.contains(where: {
+                }
+                || verb.pastIndicativePlainPositive.contains {
                     $0.lowercased().contains(searchText)
-                })
-            {
-                return true
-            }
-
-            // Other properties
-            if verb.stem.lowercased().contains(searchText)
+                }
+                || verb.pastIndicativePlainNegative.contains {
+                    $0.lowercased().contains(searchText)
+                }
+                || verb.pastIndicativePolitePositive.contains {
+                    $0.lowercased().contains(searchText)
+                }
+                || verb.pastIndicativePoliteNegative.contains {
+                    $0.lowercased().contains(searchText)
+                } || verb.stem.lowercased().contains(searchText)
                 || verb.teForm.lowercased().contains(searchText)
                 || verb.infinitive.lowercased().contains(searchText)
                 || verb.verbClass.lowercased().contains(searchText)
-            {
-                return true
-            }
-
-            return false
         }
     }
-
 }

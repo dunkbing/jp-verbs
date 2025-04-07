@@ -10,11 +10,10 @@ import SwiftUI
 import TikimUI
 
 @main
-struct JapaneseVerbsApp: App {
+struct DoushiApp: App {
     @StateObject private var themeManager = ThemeManager.shared
+    @StateObject private var dataManager = VerbDataManager()
     @State private var isLoading = true
-    @State private var modelContainer: ModelContainer?
-    @State private var error: String?
 
     var body: some Scene {
         WindowGroup {
@@ -27,34 +26,11 @@ struct JapaneseVerbsApp: App {
                 if isLoading {
                     LoadingView()
                         .transition(.opacity)
-                } else if let error = error {
-                    ErrorView(message: "Failed to initialize app: \(error)") {
-                        Task {
-                            await setupModelContainer()
-                        }
-                    }
-                    .transition(.opacity)
-                } else if let container = modelContainer {
-                    if isCompatibleWithSwiftData {
-                        ContentView()
-                            .environmentObject(createDataManager() as! VerbDataManager)
-                            .modelContainer(container)
-                            .transition(.opacity)
-                    } else {
-                        ContentView()
-                            .environmentObject(createDataManager() as! LegacyVerbDataManager)
-                            .transition(.opacity)
-                    }
                 } else {
-                    if isCompatibleWithSwiftData {
-                        ContentView()
-                            .environmentObject(createDataManager() as! VerbDataManager)
-                            .transition(.opacity)
-                    } else {
-                        ContentView()
-                            .environmentObject(createDataManager() as! LegacyVerbDataManager)
-                            .transition(.opacity)
-                    }
+                    ContentView()
+                        .modelContainer(try! PersistenceManager.shared.modelContainer())
+                        .environmentObject(dataManager)
+                        .transition(.opacity)
                 }
             }
             .accentColor(Color.appAccent)
@@ -62,8 +38,11 @@ struct JapaneseVerbsApp: App {
             .preferredColorScheme(themeManager.colorScheme)
             .withTheming()
             .onAppear {
-                Task {
-                    await setupModelContainer()
+                DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
+                    withAnimation {
+                        isLoading = false
+                    }
+                    dataManager.loadVerbs()
                 }
             }
         }
@@ -71,38 +50,6 @@ struct JapaneseVerbsApp: App {
             .windowStyle(.titleBar)
             .windowToolbarStyle(.unified)
         #endif
-    }
-
-    @MainActor
-    private func setupModelContainer() async {
-        if isCompatibleWithSwiftData {
-            do {
-                let container = try PersistenceManager.shared.modelContainer()
-                self.modelContainer = container
-                withAnimation {
-                    self.isLoading = false
-                }
-            } catch {
-                withAnimation {
-                    self.error = error.localizedDescription
-                    self.isLoading = false
-                }
-            }
-        } else {
-            // For older systems without SwiftData
-            withAnimation {
-                self.isLoading = false
-            }
-        }
-    }
-
-    @MainActor
-    private func createDataManager() -> Any {
-        if isCompatibleWithSwiftData {
-            return VerbDataManager()
-        } else {
-            return LegacyVerbDataManager()
-        }
     }
 }
 
@@ -124,7 +71,7 @@ struct LoadingView: View {
                     self.isRotating = true
                 }
 
-            Text("Loading Japanese Verbs")
+            Text("doushi")
                 .font(.system(.title, design: .rounded))
                 .bold()
                 .foregroundColor(Color.appText)
