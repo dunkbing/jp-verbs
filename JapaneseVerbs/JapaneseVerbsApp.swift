@@ -38,11 +38,11 @@ struct DoushiApp: App {
             .preferredColorScheme(themeManager.colorScheme)
             .withTheming()
             .onAppear {
-                DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
+                DispatchQueue.main.async {
                     withAnimation {
+                        dataManager.loadVerbs()
                         isLoading = false
                     }
-                    dataManager.loadVerbs()
                 }
             }
         }
