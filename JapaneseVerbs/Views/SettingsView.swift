@@ -75,6 +75,37 @@ struct SettingsView: View {
                     .padding()
                 }
 
+                // Contact Section
+                SettingsSection(title: "Contact", icon: "envelope") {
+                    VStack(alignment: .leading, spacing: 16) {
+                        ContactRow(
+                            icon: "mail",
+                            title: "Email",
+                            value: "bing@db99.dev"
+                        )
+
+                        ContactRow(
+                            icon: "paperplane",
+                            title: "Telegram",
+                            value: "@dunkbing"
+                        )
+                    }
+                    .padding()
+                }
+
+                // Other Apps Section
+                SettingsSection(title: "My Apps", icon: "apps.iphone") {
+                    VStack(alignment: .leading, spacing: 16) {
+                        AppLink(
+                            name: "Tikim",
+                            description: "Simple and intuitive expense tracker",
+                            icon: "dollarsign",
+                            link: "https://apps.apple.com/vn/app/tikim-expense-tracker/id6727017255"
+                        )
+                    }
+                    .padding()
+                }
+
                 // About Section
                 SettingsSection(title: "About", icon: "info.circle") {
                     VStack(spacing: 16) {
@@ -82,7 +113,7 @@ struct SettingsView: View {
                             Text("Version")
                                 .foregroundColor(Color.appText)
                             Spacer()
-                            Text("1.0.0")
+                            Text(appVersion)
                                 .foregroundColor(Color.appSubtitle)
                         }
 
@@ -96,12 +127,30 @@ struct SettingsView: View {
                             }
                         }
 
-                        AboutFeatures()
+                        // Rate App Button
+                        //                        Button(action: {
+                        //                            if let writeReviewURL = URL(string: "https://apps.apple.com/app/doushi-japanese-verbs/id6744300188?action=write-review") {
+                        //                                UIApplication.shared.open(writeReviewURL, options: [:], completionHandler: nil)
+                        //                            }
+                        //                        }) {
+                        //                            HStack {
+                        //                                Image(systemName: "star.fill")
+                        //                                    .foregroundColor(Color.appYellow)
+                        //
+                        //                                Text("Rate Doushi")
+                        //                                    .foregroundColor(Color.appAccent)
+                        //
+                        //                                Spacer()
+                        //
+                        //                                Image(systemName: "chevron.right")
+                        //                                    .foregroundColor(Color.appSubtitle)
+                        //                            }
+                        //                        }
                     }
                     .padding()
                 }
 
-                Spacer(minLength: 80)
+                Spacer(minLength: 100)
             }
             .padding()
         }
@@ -114,22 +163,71 @@ struct SettingsView: View {
             dataManager.toggleVerbSelection(verb)
         }
     }
+
+    private var appVersion: String {
+        let bundle = Bundle.main
+        let version = bundle.infoDictionary?["CFBundleShortVersionString"] as? String ?? "Unknown"
+        let build = bundle.infoDictionary?["CFBundleVersion"] as? String ?? "0"
+        return "\(version) (Build \(build))"
+    }
 }
 
-struct AboutFeatures: View {
-    var body: some View {
-        VStack(alignment: .leading, spacing: 8) {
-            Text("Features")
-                .font(.headline)
-                .foregroundColor(Color.appText)
-                .padding(.top, 8)
+struct ContactRow: View {
+    let icon: String
+    let title: String
+    let value: String
 
-            FeatureRow(icon: "magnifyingglass", text: "Search Japanese verbs by meaning or romaji")
-            FeatureRow(icon: "book", text: "Detailed verb conjugations with Japanese and romaji")
-            FeatureRow(icon: "rectangle.stack.fill", text: "Customizable flashcards for practicing")
-            FeatureRow(icon: "paintpalette", text: "Beautiful Catppuccin color themes")
-            FeatureRow(icon: "iphone", text: "Works on iOS 17+ and macOS 14+")
+    var body: some View {
+        HStack(spacing: 12) {
+            Image(systemName: icon)
+                .foregroundColor(Color.appAccent)
+                .frame(width: 30)
+
+            VStack(alignment: .leading, spacing: 4) {
+                Text(title)
+                    .font(.subheadline)
+                    .foregroundColor(Color.appSubtitle)
+
+                Text(value)
+                    .font(.body)
+                    .foregroundColor(Color.appText)
+            }
+
+            Spacer()
         }
-        .padding(.top, 8)
+    }
+}
+
+struct AppLink: View {
+    let name: String
+    let description: String
+    let icon: String
+    let link: String
+
+    var body: some View {
+        Link(destination: URL(string: link)!) {
+            HStack(spacing: 12) {
+                Image(systemName: icon)
+                    .foregroundColor(Color.appAccent)
+                    .frame(width: 30, height: 30)
+                    .background(Color.appSurface2.opacity(0.3))
+                    .clipShape(Circle())
+
+                VStack(alignment: .leading, spacing: 4) {
+                    Text(name)
+                        .font(.headline)
+                        .foregroundColor(Color.appText)
+
+                    Text(description)
+                        .font(.subheadline)
+                        .foregroundColor(Color.appSubtitle)
+                }
+
+                Spacer()
+
+                Image(systemName: "chevron.right")
+                    .foregroundColor(Color.appSubtitle)
+            }
+        }
     }
 }
