@@ -9,10 +9,10 @@ import SwiftUI
 import TikimUI
 
 struct ContentView: View {
-    @EnvironmentObject var dataManager: VerbDataManager
     @State private var searchText = ""
     @State private var selectedTab = 0
-    @ObservedObject private var themeManager = ThemeManager.shared
+    @EnvironmentObject var dataManager: VerbDataManager
+    @EnvironmentObject private var themeManager: ThemeManager
 
     #if os(iOS)
         @ViewBuilder

@@ -9,7 +9,7 @@ import SwiftUI
 import TikimUI
 
 struct ThemeInfoView: View {
-    @ObservedObject private var themeManager = ThemeManager.shared
+    @EnvironmentObject private var themeManager: ThemeManager
     @Environment(\.dismiss) private var dismiss
 
     var body: some View {

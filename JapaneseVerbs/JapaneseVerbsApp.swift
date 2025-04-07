@@ -58,6 +58,8 @@ struct JapaneseVerbsApp: App {
                 }
             }
             .accentColor(Color.appAccent)
+            .environmentObject(themeManager)
+            .preferredColorScheme(themeManager.colorScheme)
             .withTheming()
             .onAppear {
                 Task {

@@ -9,7 +9,7 @@ import SwiftUI
 import TikimUI
 
 struct ThemeToggleView: View {
-    @ObservedObject private var themeManager = ThemeManager.shared
+    @EnvironmentObject private var themeManager: ThemeManager
     @State private var isExpanded = false
 
     var body: some View {
@@ -60,7 +60,7 @@ struct ThemeToggleView: View {
 
 // More compact theme button for navigation bar
 struct ThemeButton: View {
-    @ObservedObject private var themeManager = ThemeManager.shared
+    @EnvironmentObject private var themeManager: ThemeManager
     @State private var showingThemeSheet = false
 
     var body: some View {
@@ -79,7 +79,7 @@ struct ThemeButton: View {
 
 // Sheet view for theme selection
 struct ThemeSelectionView: View {
-    @ObservedObject private var themeManager = ThemeManager.shared
+    @EnvironmentObject private var themeManager: ThemeManager
     @Environment(\.dismiss) private var dismiss
 
     var body: some View {
