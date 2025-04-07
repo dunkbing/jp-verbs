@@ -15,7 +15,6 @@ struct JapaneseVerbsApp: App {
     @State private var isLoading = true
     @State private var modelContainer: ModelContainer?
     @State private var error: String?
-    @State private var showSplash = true
 
     var body: some Scene {
         WindowGroup {
@@ -25,13 +24,7 @@ struct JapaneseVerbsApp: App {
                     .edgesIgnoringSafeArea(.all)
 
                 // Main content based on loading state
-                if showSplash {
-                    SplashScreenView {
-                        withAnimation {
-                            self.showSplash = false
-                        }
-                    }
-                } else if isLoading {
+                if isLoading {
                     LoadingView()
                         .transition(.opacity)
                 } else if let error = error {
@@ -67,7 +60,6 @@ struct JapaneseVerbsApp: App {
             .accentColor(Color.appAccent)
             .withTheming()
             .onAppear {
-                // Start loading in the background while splash is showing
                 Task {
                     await setupModelContainer()
                 }
@@ -81,9 +73,6 @@ struct JapaneseVerbsApp: App {
 
     @MainActor
     private func setupModelContainer() async {
-        // Add a slight delay to ensure splash screen shows properly
-        try? await Task.sleep(nanoseconds: 1_000_000_000)  // 1 second
-
         if isCompatibleWithSwiftData {
             do {
                 let container = try PersistenceManager.shared.modelContainer()

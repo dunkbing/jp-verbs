@@ -45,13 +45,13 @@ struct VerbListView: View {
                     verbsList
                 }
 
-                Spacer(minLength: 80)
+                #if os(iOS)
+                    Spacer(minLength: 80)
+                #endif
             }
         }
         .background(Color.appBackground)
     }
-
-    // MARK: - Component Views
 
     private var loadingView: some View {
         VStack {

@@ -25,113 +25,116 @@ struct VerbDetailView: View {
         #endif
     }
 
-    // iOS Layout with TabPickerView
-    private var iOSLayout: some View {
-        ScrollView {
-            VStack(alignment: .leading, spacing: 20) {
-                // Custom navigation area
-                HStack {
-                    BackButton(label: "Back to Verbs")
+    #if os(iOS)
+        private var iOSLayout: some View {
+            ScrollView {
+                VStack(alignment: .leading, spacing: 20) {
+                    HStack {
+                        BackButton(label: "Back to Verbs")
 
-                    Spacer()
+                        Spacer()
 
-                    Button(action: {
-                        dataManager.toggleVerbSelection(verb)
-                    }) {
-                        Image(systemName: verb.isSelected ? "star.fill" : "star")
-                            .font(.title2)
-                            .foregroundColor(verb.isSelected ? Color.appYellow : Color.appSubtitle)
-                            .padding(.trailing, 10)
+                        Button(action: {
+                            dataManager.toggleVerbSelection(verb)
+                        }) {
+                            Image(systemName: verb.isSelected ? "star.fill" : "star")
+                                .font(.title2)
+                                .foregroundColor(
+                                    verb.isSelected ? Color.appYellow : Color.appSubtitle
+                                )
+                                .padding(.trailing, 10)
+                        }
+                    }
+                    .padding(.top, 8)
+                    .padding(.bottom, 12)
+
+                    // Header section with verb information
+                    verbHeaderSection
+
+                    // Tab picker for iOS
+                    TabPickerView(
+                        selection: $selectedSection,
+                        options: sections.map { (value: $0, title: $0) }
+                    )
+                    .padding(.horizontal)
+
+                    // Display the selected section
+                    Group {
+                        switch selectedSection {
+                        case "Basic":
+                            basicInfoSection
+                        case "Present":
+                            presentIndicativeSection
+                        case "Past":
+                            pastIndicativeSection
+                        case "Progressive":
+                            progressiveSection
+                        case "Conditional":
+                            conditionalSection
+                        default:
+                            basicInfoSection
+                        }
                     }
                 }
-                .padding(.top, 8)
-                .padding(.bottom, 12)
-
-                // Header section with verb information
-                verbHeaderSection
-
-                // Tab picker for iOS
-                TabPickerView(
-                    selection: $selectedSection,
-                    options: sections.map { (value: $0, title: $0) }
-                )
-                .padding(.horizontal)
-
-                // Display the selected section
-                Group {
-                    switch selectedSection {
-                    case "Basic":
-                        basicInfoSection
-                    case "Present":
-                        presentIndicativeSection
-                    case "Past":
-                        pastIndicativeSection
-                    case "Progressive":
-                        progressiveSection
-                    case "Conditional":
-                        conditionalSection
-                    default:
-                        basicInfoSection
-                    }
-                }
+                .padding()
+                Spacer(minLength: 150)
             }
-            .padding()
-            Spacer(minLength: 150)
+            .navigationBarHidden(true)
+            .background(Color.appBackground)
         }
-        .navigationBarHidden(true)
-        .background(Color.appBackground)
-    }
+    #endif
 
-    // macOS Layout with all sections in a column
-    private var macOSLayout: some View {
-        ScrollView {
-            VStack(alignment: .leading, spacing: 24) {
-                // Custom navigation area
-                HStack {
-                    BackButton(label: "Back to Verbs")
+    #if os(macOS)
+        private var macOSLayout: some View {
+            ScrollView {
+                VStack(alignment: .leading, spacing: 24) {
+                    HStack {
+                        BackButton(label: "Back to Verbs")
 
-                    Spacer()
+                        Spacer()
 
-                    Button(action: {
-                        dataManager.toggleVerbSelection(verb)
-                    }) {
-                        Image(systemName: verb.isSelected ? "star.fill" : "star")
-                            .font(.title2)
-                            .foregroundColor(verb.isSelected ? Color.appYellow : Color.appSubtitle)
-                            .padding(.trailing, 10)
+                        Button(action: {
+                            dataManager.toggleVerbSelection(verb)
+                        }) {
+                            Image(systemName: verb.isSelected ? "star.fill" : "star")
+                                .font(.title2)
+                                .foregroundColor(
+                                    verb.isSelected ? Color.appYellow : Color.appSubtitle
+                                )
+                                .padding(.trailing, 10)
+                        }
                     }
+                    .padding(.top, 8)
+                    .padding(.bottom, 12)
+
+                    // Header section
+                    verbHeaderSection
+
+                    // Basic section
+                    macOSSectionHeader("Basic Information")
+                    macOSBasicInfoSection
+
+                    // Present Indicative section
+                    macOSSectionHeader("Present Indicative")
+                    macOSPresentIndicativeSection
+
+                    // Past Indicative section
+                    macOSSectionHeader("Past Indicative")
+                    macOSPastIndicativeSection
+
+                    // Progressive section
+                    macOSSectionHeader("Progressive Forms")
+                    macOSProgressiveSection
+
+                    // Conditional section
+                    macOSSectionHeader("Conditional Forms")
+                    macOSConditionalSection
                 }
-                .padding(.top, 8)
-                .padding(.bottom, 12)
-
-                // Header section
-                verbHeaderSection
-
-                // Basic section
-                macOSSectionHeader("Basic Information")
-                macOSBasicInfoSection
-
-                // Present Indicative section
-                macOSSectionHeader("Present Indicative")
-                macOSPresentIndicativeSection
-
-                // Past Indicative section
-                macOSSectionHeader("Past Indicative")
-                macOSPastIndicativeSection
-
-                // Progressive section
-                macOSSectionHeader("Progressive Forms")
-                macOSProgressiveSection
-
-                // Conditional section
-                macOSSectionHeader("Conditional Forms")
-                macOSConditionalSection
+                .padding()
             }
-            .padding()
+            .background(Color.appBackground)
         }
-        .navigationBarHidden(true)
-        .background(Color.appBackground)
-    }
+    #endif
 
     // Section header for macOS
     private func macOSSectionHeader(_ title: String) -> some View {
