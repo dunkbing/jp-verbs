@@ -28,12 +28,12 @@ struct DoushiApp: App {
                         .transition(.opacity)
                 } else {
                     ContentView()
-                        .modelContainer(try! PersistenceManager.shared.modelContainer())
-                        .environmentObject(dataManager)
                         .transition(.opacity)
                 }
             }
             .accentColor(Color.appAccent)
+            .modelContainer(try! PersistenceManager.shared.modelContainer())
+            .environmentObject(dataManager)
             .environmentObject(themeManager)
             .preferredColorScheme(themeManager.colorScheme)
             .withTheming()
