@@ -81,13 +81,15 @@ struct SettingsView: View {
                         ContactRow(
                             icon: "mail",
                             title: "Email",
-                            value: "bing@db99.dev"
+                            value: "bing@db99.dev",
+                            urlScheme: "mailto:bing@db99.dev"
                         )
 
                         ContactRow(
                             icon: "paperplane",
                             title: "Telegram",
-                            value: "@dunkbing"
+                            value: "@dunkbing",
+                            urlScheme: "https://t.me/dunkbing"
                         )
                     }
                     .padding()
@@ -172,29 +174,46 @@ struct SettingsView: View {
     }
 }
 
+// Updated ContactRow to make it tappable
 struct ContactRow: View {
     let icon: String
     let title: String
     let value: String
+    let urlScheme: String
 
     var body: some View {
-        HStack(spacing: 12) {
-            Image(systemName: icon)
-                .foregroundColor(Color.appAccent)
-                .frame(width: 30)
-
-            VStack(alignment: .leading, spacing: 4) {
-                Text(title)
-                    .font(.subheadline)
-                    .foregroundColor(Color.appSubtitle)
-
-                Text(value)
-                    .font(.body)
-                    .foregroundColor(Color.appText)
+        Button(action: {
+            if let url = URL(string: urlScheme) {
+                #if os(iOS)
+                    UIApplication.shared.open(url)
+                #elseif os(macOS)
+                    NSWorkspace.shared.open(url)
+                #endif
             }
+        }) {
+            HStack(spacing: 12) {
+                Image(systemName: icon)
+                    .foregroundColor(Color.appAccent)
+                    .frame(width: 30)
 
-            Spacer()
+                VStack(alignment: .leading, spacing: 4) {
+                    Text(title)
+                        .font(.subheadline)
+                        .foregroundColor(Color.appSubtitle)
+
+                    Text(value)
+                        .font(.body)
+                        .foregroundColor(Color.appText)
+                }
+
+                Spacer()
+
+                Image(systemName: "arrow.up.right.square")
+                    .font(.footnote)
+                    .foregroundColor(Color.appSubtitle)
+            }
         }
+        .buttonStyle(PlainButtonStyle())
     }
 }
 
