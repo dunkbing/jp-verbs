@@ -48,8 +48,10 @@ class VerbDataManager: ObservableObject {
 
             if existingVerbs.isEmpty {
                 // Load from JSON file if no verbs in the database
+                print("fetching from verbs.json")
                 try loadVerbsFromJSON(context: context)
             } else {
+                print("fetched from db")
                 self.verbs = existingVerbs
                 loadSelectedVerbs(context: context)
                 self.isLoading = false

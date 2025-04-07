@@ -199,11 +199,8 @@ struct FlashCardDeckView: View {
 
     private var startStudyButton: some View {
         Button(action: {
-            selectedCards = Array(
-                dataManager.verbs.shuffled().prefix(numberOfVerbs))
-            // Only show the flash cards if we have cards selected
-            if !selectedCards.isEmpty {
-                showingFlashCards = true
+            if !dataManager.selectedVerbs.isEmpty {
+                cardsToPresent = CardSet(cards: dataManager.selectedVerbs)
             }
         }) {
             Label("Study Selected Verbs", systemImage: "play.fill")
