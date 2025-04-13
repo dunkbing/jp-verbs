@@ -89,8 +89,6 @@ struct VerbDetailView: View {
             ScrollView {
                 VStack(alignment: .leading, spacing: 24) {
                     HStack {
-                        BackButton(label: "Back to Verbs")
-
                         Spacer()
 
                         Button(action: {
@@ -104,8 +102,6 @@ struct VerbDetailView: View {
                                 .padding(.trailing, 10)
                         }
                     }
-                    .padding(.top, 8)
-                    .padding(.bottom, 12)
 
                     // Header section
                     verbHeaderSection

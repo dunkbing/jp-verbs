@@ -222,8 +222,8 @@ struct VerbRowView: View {
                         .font(.headline)
                         .foregroundColor(Color.appText)
 
-                    if !verb.presentIndicativePlainPositive.isEmpty {
-                        Text(verb.presentIndicativePlainPositive[0])
+                    if verb.presentIndicativePlainPositive.count > 1 {
+                        Text(verb.presentIndicativePlainPositive[1])
                             .font(.subheadline)
                             .foregroundColor(Color.appSubtitle)
                     }
