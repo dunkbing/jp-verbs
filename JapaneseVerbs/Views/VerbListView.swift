@@ -34,7 +34,7 @@ struct VerbListView: View {
                     }
                 )
                 .padding(.horizontal)
-                .padding(.top, 8)
+                .padding(.vertical, 8)
 
                 if !dataManager.selectedVerbs.isEmpty && !isSearchFocused {
                     studyButton
