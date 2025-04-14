@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import TikimUI
 
 struct VerbListView: View {
     @EnvironmentObject var dataManager: VerbDataManager
@@ -21,7 +22,11 @@ struct VerbListView: View {
         ZStack(alignment: .bottom) {
             VStack(spacing: 0) {
                 SearchBar(
-                    text: $searchText, placeholder: "Search verbs",
+                    text: $searchText,
+                    placeholder: "Search verbs",
+                    onSearchTextChanged: { newText in
+                        print(newText)
+                    },
                     onFocusChange: { focused in
                         withAnimation {
                             isSearchFocused = focused
@@ -147,67 +152,6 @@ struct VerbListView: View {
             FlashCardView(verbs: dataManager.selectedVerbs)
                 .withTheming()
         }
-    }
-}
-
-struct SearchBar: View {
-    @Binding var text: String
-    var placeholder: String
-    var onCommit: (() -> Void)? = nil
-    var onFocusChange: ((Bool) -> Void)? = nil
-
-    // Animation states
-    @State private var isFocused: Bool = false
-    @FocusState private var isTextFieldFocused: Bool
-
-    var body: some View {
-        HStack(spacing: 10) {
-            Image(systemName: "magnifyingglass")
-                .font(.system(size: 16, weight: .medium))
-                .foregroundColor(isFocused ? Color.appAccent : Color.appSubtitle)
-                .animation(.easeInOut(duration: 0.2), value: isFocused)
-
-            TextField(placeholder, text: $text)
-                .foregroundColor(Color.appText)
-                .font(.system(size: 16))
-                .focused($isTextFieldFocused)
-                .onChange(of: isTextFieldFocused) { focused in
-                    withAnimation {
-                        isFocused = focused
-                        onFocusChange?(focused)
-                    }
-                }
-                .submitLabel(.search)
-                .onSubmit {
-                    onCommit?()
-                }
-
-            if !text.isEmpty {
-                Button(action: {
-                    withAnimation {
-                        text = ""
-                    }
-                }) {
-                    Image(systemName: "xmark.circle.fill")
-                        .font(.system(size: 16))
-                        .foregroundColor(Color.appSubtitle)
-                }
-                .transition(.opacity)
-            }
-        }
-        .padding(.vertical, 12)
-        .padding(.horizontal, 16)
-        .background(
-            RoundedRectangle(cornerRadius: 12)
-                .fill(Color.appSurface2.opacity(isFocused ? 0.15 : 0.1))
-                .overlay(
-                    RoundedRectangle(cornerRadius: 12)
-                        .stroke(
-                            isFocused ? Color.appAccent.opacity(0.5) : Color.clear, lineWidth: 1.5)
-                )
-        )
-        .animation(.easeInOut(duration: 0.2), value: isFocused)
-        .animation(.easeInOut(duration: 0.2), value: text)
     }
 }
 
