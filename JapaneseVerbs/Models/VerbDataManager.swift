@@ -41,13 +41,12 @@ class VerbDataManager: ObservableObject {
         isLoading = true
 
         let context = modelContainer.mainContext
-        let descriptor = FetchDescriptor<Verb>()
+        let descriptor = FetchDescriptor<Verb>(sortBy: [SortDescriptor(\.romaji)])
 
         do {
             let existingVerbs = try context.fetch(descriptor)
 
             if existingVerbs.isEmpty {
-                // Load from JSON file if no verbs in the database
                 print("fetching from verbs.json")
                 try loadVerbsFromJSON(context: context)
             } else {
@@ -96,7 +95,8 @@ class VerbDataManager: ObservableObject {
 
         try context.save()
 
-        self.verbs = newVerbs
+        // sort by romaji
+        self.verbs = newVerbs.sorted { $0.romaji < $1.romaji }
         loadSelectedVerbs(context: context)
 
         self.isLoading = false
@@ -112,6 +112,8 @@ class VerbDataManager: ObservableObject {
                 selectedVerbs.removeAll { $0.id == verb.id }
             }
 
+            selectedVerbs.sort { $0.romaji < $1.romaji }
+
             let selectedVerbIds = selectedVerbs.map { $0.id }
             UserDefaults.standard.set(selectedVerbIds, forKey: "selectedVerbIds")
         }
@@ -125,7 +127,6 @@ class VerbDataManager: ObservableObject {
         let searchText = text.lowercased()
 
         return verbs.filter { verb in
-            // Comprehensive search across multiple fields
             return verb.romaji.lowercased().contains(searchText)
                 || verb.presentIndicativeMeaningPositive.lowercased().contains(searchText)
                 || verb.presentIndicativeMeaningNegative.lowercased().contains(searchText)
