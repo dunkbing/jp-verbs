@@ -18994,7 +18994,10 @@
         "te_form": "dabette",
         "infinitive": "daberi  ",
         "present_indicative": {
-            "plain": { "positive": ["daberu"], "negative": ["daberanai"] },
+            "plain": {
+                "positive": ["daberu", "駄弁る"],
+                "negative": ["daberanai"]
+            },
             "polite": {
                 "positive": ["daberimasu"],
                 "negative": ["daberimasen"]
@@ -38466,7 +38469,10 @@
         "te_form": "agete",
         "infinitive": "age  ",
         "present_indicative": {
-            "plain": { "positive": ["ageru"], "negative": ["agenai"] },
+            "plain": {
+                "positive": ["ageru", "あげる"],
+                "negative": ["agenai"]
+            },
             "polite": { "positive": ["agemasu"], "negative": ["agemasen"] },
             "meaning": {
                 "positive": "give, will give",
@@ -69129,7 +69135,10 @@
         "te_form": "azakette",
         "infinitive": "azakeri  ",
         "present_indicative": {
-            "plain": { "positive": ["azakeru"], "negative": ["azakeranai"] },
+            "plain": {
+                "positive": ["azakeru", "嘲る"],
+                "negative": ["azakeranai"]
+            },
             "polite": {
                 "positive": ["azakerimasu"],
                 "negative": ["azakerimasen"]
@@ -89029,5 +89038,387 @@
             }
         },
         "romaji": "kaku"
+    },
+    {
+        "id": "01JZNQP45JH9KT3D7RXMEY2GV8",
+        "class": "3 ~ Suru ~ する",
+        "stem": "shuuri -  修理",
+        "te_form": "shuuri shite 修理して",
+        "infinitive": "shuuri   修理\n",
+        "present_indicative": {
+            "plain": {
+                "positive": ["shuuri suru", "修理する"],
+                "negative": ["shuuri shinai", "修理しない"]
+            },
+            "polite": {
+                "positive": ["shuuri shimasu", "修理します"],
+                "negative": ["shuuri shimasen", "修理しません"]
+            },
+            "meaning": {
+                "positive": "repair, fix, will repair, fix",
+                "negative": "don't repair, fix, won't repair, fix"
+            }
+        },
+        "presumptive_volitional": {
+            "plain": {
+                "positive": [
+                    "shuuri shiyou",
+                    "修理しよう",
+                    "shuuri suru darou",
+                    "修理するだろう",
+                    ""
+                ],
+                "negative": ["shuuri shinai darou", "修理しないだろう", ""]
+            },
+            "polite": {
+                "positive": [
+                    "shuuri shimashou",
+                    "修理しましょう",
+                    "shuuri suru deshou",
+                    "修理するでしょう"
+                ],
+                "negative": ["shuuri shinai deshou", "修理しないでしょう"]
+            },
+            "meaning": {
+                "positive": "lets repair, fix, will probably repair, fix",
+                "negative": "let's not repair, fix, probably won't repair, fix"
+            }
+        },
+        "imperative": {
+            "plain": {
+                "positive": ["shuuri shiro", "修理しろ"],
+                "negative": ["shuuri suru na", "修理するな"]
+            },
+            "polite": {
+                "positive": ["shuuri shite kudasai", "修理してください"],
+                "negative": ["shuuri shinai de kudasai", "修理しないでください"]
+            },
+            "meaning": {
+                "positive": "repair, fix!",
+                "negative": "don't repair, fix!"
+            }
+        },
+        "past_indicative": {
+            "plain": {
+                "positive": ["shuuri shita", "修理した"],
+                "negative": ["shuuri shinakatta", "修理しなかった"]
+            },
+            "polite": {
+                "positive": ["shuuri shimashita", "修理しました"],
+                "negative": ["shuuri shimasen deshita", "修理しませんでした"]
+            },
+            "meaning": {
+                "positive": "repaired, fixed",
+                "negative": "didn't repair, fix"
+            }
+        },
+        "past_presumptive": {
+            "plain": {
+                "positive": [
+                    "shuuri shitarou",
+                    "修理したろう",
+                    "shuuri shita darou",
+                    "修理しただろう"
+                ],
+                "negative": ["shuuri shinakatta darou", "修理しなかっただろう"]
+            },
+            "polite": {
+                "positive": ["shuuri shita deshou", "修理しただろう"],
+                "negative": [
+                    "shuuri shinakatta deshou",
+                    "修理しなかったでしょう"
+                ]
+            },
+            "meaning": {
+                "positive": "probably repaired, fixed",
+                "negative": "probably didn't repair, fix"
+            }
+        },
+        "present_progressive": {
+            "plain": {
+                "positive": ["shuuri shite iru", "修理している"],
+                "negative": ["shuuri shite inai", "修理していない"]
+            },
+            "polite": {
+                "positive": ["shuuri shite imasu", "修理しています"],
+                "negative": ["shuuri shite imasen", "修理していません"]
+            },
+            "meaning": {
+                "positive": "is repairing, fixing",
+                "negative": "is not repairing, fixing"
+            }
+        },
+        "past_progressive": {
+            "plain": {
+                "positive": ["shuuri shite ita", "修理していた"],
+                "negative": ["shuuri shite inakatta", "修理していなかった"]
+            },
+            "polite": {
+                "positive": ["shuuri shite imashita", "修理していました"],
+                "negative": [
+                    "shuuri shite imasen deshita",
+                    "修理していませんでした"
+                ]
+            },
+            "meaning": {
+                "positive": "was repairing, fixing",
+                "negative": "wasn't repairing, fixing"
+            }
+        },
+        "provisional_conditional_eba": {
+            "plain": {
+                "positive": ["shuuri sureba", "修理すれば"],
+                "negative": ["shuuri shinakereba", "修理しなければ"]
+            },
+            "polite": {
+                "positive": ["n/a"],
+                "negative": ["n/a"]
+            },
+            "meaning": {
+                "positive": "if repair, fix",
+                "negative": "if don't repair, fix"
+            }
+        },
+        "conditional_tara_form": {
+            "plain": {
+                "positive": ["shuuri shitara", "修理したら"],
+                "negative": ["shuuri shinakattara", "修理しなかったら"]
+            },
+            "polite": {
+                "positive": ["shuuri shimashitara", "修理しましたら"],
+                "negative": [
+                    "shuuri shimasen deshitara",
+                    "修理しませんでしたら"
+                ]
+            },
+            "meaning": {
+                "positive": "if repair, fix",
+                "negative": "if don't repair, fix"
+            }
+        },
+        "potential": {
+            "plain": {
+                "positive": ["shuuri dekiru", "修理できる", ""],
+                "negative": ["shuuri dekinai", "修理できない", ""]
+            },
+            "polite": {
+                "positive": ["shuuri dekimasu", "修理できます", ""],
+                "negative": ["shuuri dekimasen", "修理できません", ""]
+            },
+            "meaning": {
+                "positive": "can repair, fix",
+                "negative": "cannot repair, fix"
+            }
+        },
+        "causative": {
+            "plain": {
+                "positive": ["shuuri saseru", "修理させる", ""],
+                "negative": ["shuuri sasenai", "修理させない", ""]
+            },
+            "polite": {
+                "positive": ["shuuri sasemasu", "修理させます", ""],
+                "negative": ["shuuri sasemasen", "修理させません", ""]
+            },
+            "meaning": {
+                "positive": "make repair, fix",
+                "negative": "don't make repair, fix"
+            }
+        },
+        "passive": {
+            "plain": {
+                "positive": ["shuuri sareru", "修理される", ""],
+                "negative": ["shuuri sarenai", "修理されない", ""]
+            },
+            "polite": {
+                "positive": ["shuuri saremasu", "修理されます", ""],
+                "negative": ["shuuri saremasen", "修理されません", ""]
+            },
+            "meaning": {
+                "positive": "be repaired, fixed",
+                "negative": "not be repaired, fixed"
+            }
+        },
+        "romaji": "shuuri suru"
+    },
+    {
+        "id": "01JZNRPV82M5T7D6HK9FXCZ4A3",
+        "class": "Special ~ Irregular ~ 来る",
+        "stem": "ku / ki - 来",
+        "te_form": "kite 来て",
+        "infinitive": "ki 来",
+        "present_indicative": {
+            "plain": {
+                "positive": ["kuru", "来る"],
+                "negative": ["konai", "来ない"]
+            },
+            "polite": {
+                "positive": ["kimasu", "来ます"],
+                "negative": ["kimasen", "来ません"]
+            },
+            "meaning": {
+                "positive": "come, will come",
+                "negative": "don't come, won't come"
+            }
+        },
+        "presumptive_volitional": {
+            "plain": {
+                "positive": ["koyou", "来よう", "kuru darou", "来るだろう", ""],
+                "negative": ["konai darou", "来ないだろう", ""]
+            },
+            "polite": {
+                "positive": [
+                    "kimashou",
+                    "来ましょう",
+                    "kuru deshou",
+                    "来るでしょう"
+                ],
+                "negative": ["konai deshou", "来ないでしょう"]
+            },
+            "meaning": {
+                "positive": "let's come, will probably come",
+                "negative": "let's not come, probably won't come"
+            }
+        },
+        "imperative": {
+            "plain": {
+                "positive": ["koi", "来い"],
+                "negative": ["kuru na", "来るな"]
+            },
+            "polite": {
+                "positive": ["kite kudasai", "来てください"],
+                "negative": ["konai de kudasai", "来ないでください"]
+            },
+            "meaning": {
+                "positive": "come!",
+                "negative": "don't come!"
+            }
+        },
+        "past_indicative": {
+            "plain": {
+                "positive": ["kita", "来た"],
+                "negative": ["konakatta", "来なかった"]
+            },
+            "polite": {
+                "positive": ["kimashita", "来ました"],
+                "negative": ["kimasen deshita", "来ませんでした"]
+            },
+            "meaning": {
+                "positive": "came",
+                "negative": "didn't come"
+            }
+        },
+        "past_presumptive": {
+            "plain": {
+                "positive": ["kitarou", "来たろう", "kita darou", "来ただろう"],
+                "negative": ["konakatta darou", "来なかっただろう"]
+            },
+            "polite": {
+                "positive": ["kita deshou", "来たでしょう"],
+                "negative": ["konakatta deshou", "来なかったでしょう"]
+            },
+            "meaning": {
+                "positive": "probably came",
+                "negative": "probably didn't come"
+            }
+        },
+        "present_progressive": {
+            "plain": {
+                "positive": ["kite iru", "来ている"],
+                "negative": ["kite inai", "来ていない"]
+            },
+            "polite": {
+                "positive": ["kite imasu", "来ています"],
+                "negative": ["kite imasen", "来ていません"]
+            },
+            "meaning": {
+                "positive": "is coming, has come",
+                "negative": "is not coming, has not come"
+            }
+        },
+        "past_progressive": {
+            "plain": {
+                "positive": ["kite ita", "来ていた"],
+                "negative": ["kite inakatta", "来ていなかった"]
+            },
+            "polite": {
+                "positive": ["kite imashita", "来ていました"],
+                "negative": ["kite imasen deshita", "来ていませんでした"]
+            },
+            "meaning": {
+                "positive": "was coming, had come",
+                "negative": "wasn't coming, had not come"
+            }
+        },
+        "provisional_conditional_eba": {
+            "plain": {
+                "positive": ["kureba", "来れば"],
+                "negative": ["konakereba", "来なければ"]
+            },
+            "polite": {
+                "positive": ["n/a"],
+                "negative": ["n/a"]
+            },
+            "meaning": {
+                "positive": "if come",
+                "negative": "if don't come"
+            }
+        },
+        "conditional_tara_form": {
+            "plain": {
+                "positive": ["kitara", "来たら"],
+                "negative": ["konakattara", "来なかったら"]
+            },
+            "polite": {
+                "positive": ["kimashitara", "来ましたら"],
+                "negative": ["kimasen deshitara", "来ませんでしたら"]
+            },
+            "meaning": {
+                "positive": "if come",
+                "negative": "if don't come"
+            }
+        },
+        "potential": {
+            "plain": {
+                "positive": ["korareru", "来られる", ""],
+                "negative": ["korarenai", "来られない", ""]
+            },
+            "polite": {
+                "positive": ["koraremasu", "来られます", ""],
+                "negative": ["koraremasen", "来られません", ""]
+            },
+            "meaning": {
+                "positive": "can come",
+                "negative": "cannot come"
+            }
+        },
+        "causative": {
+            "plain": {
+                "positive": ["kosaseru", "来させる", ""],
+                "negative": ["kosasenai", "来させない", ""]
+            },
+            "polite": {
+                "positive": ["kosasemasu", "来させます", ""],
+                "negative": ["kosasemasen", "来させません", ""]
+            },
+            "meaning": {
+                "positive": "make come",
+                "negative": "don't make come"
+            }
+        },
+        "passive": {
+            "plain": {
+                "positive": ["korareru", "来られる", ""],
+                "negative": ["korarenai", "来られない", ""]
+            },
+            "polite": {
+                "positive": ["koraremasu", "来られます", ""],
+                "negative": ["koraremasen", "来られません", ""]
+            },
+            "meaning": {
+                "positive": "be come by",
+                "negative": "not be come by"
+            }
+        },
+        "romaji": "kuru"
     }
 ]
