@@ -54,8 +54,7 @@ struct VerbListView: View {
                 .padding(.horizontal)
                 .padding(.vertical, 8)
 
-                // Active filters indicator
-                if hasActiveFilters && !filterManager.filters.allSatisfy({ $0.isSelected }) {
+                if hasActiveFilters {
                     activeFiltersView
                 }
 
