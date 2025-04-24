@@ -132,7 +132,7 @@ struct SearchFilterView: View {
     @Environment(\.dismiss) private var dismiss
 
     var body: some View {
-        NavigationView {
+        NavigationStack {
             List {
                 Section(header: Text("Select Search Filters")) {
                     ForEach(filterManager.filters) { filter in
