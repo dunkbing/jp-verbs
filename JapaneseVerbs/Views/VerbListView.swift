@@ -2,7 +2,7 @@
 //  VerbListView.swift
 //  JapaneseVerbs
 //
-//  Created by Bùi Đặng Bình on 6/4/25.
+//  Updated by Claude on 24/4/25.
 //
 
 import SwiftUI
@@ -10,31 +10,54 @@ import TikimUI
 
 struct VerbListView: View {
     @EnvironmentObject var dataManager: VerbDataManager
+    @StateObject private var filterManager = SearchFilterManager()
     @Binding var searchText: String
     @State private var showingAddToFlashcards = false
     @State private var isSearchFocused = false
+    @State private var showingFilters = false
 
     var filteredVerbs: [Verb] {
-        dataManager.search(text: searchText)
+        dataManager.search(text: searchText, filters: filterManager.filters)
     }
 
     var body: some View {
         ZStack(alignment: .bottom) {
             VStack(spacing: 0) {
-                SearchBar(
-                    text: $searchText,
-                    placeholder: "Search verbs",
-                    onSearchTextChanged: { newText in
-                        print(newText)
-                    },
-                    onFocusChange: { focused in
-                        withAnimation {
-                            isSearchFocused = focused
+                HStack {
+                    SearchBar(
+                        text: $searchText,
+                        placeholder: "Search verbs",
+                        onSearchTextChanged: { newText in
+                            print(newText)
+                        },
+                        onFocusChange: { focused in
+                            withAnimation {
+                                isSearchFocused = focused
+                            }
                         }
+                    )
+
+                    // Filter button
+                    Button(action: {
+                        showingFilters = true
+                    }) {
+                        Image(systemName: "line.3.horizontal.decrease.circle")
+                            .font(.system(size: 20))
+                            .foregroundColor(
+                                hasActiveFilters ? Color.appAccent : Color.appText
+                            )
+                            .padding(8)
+                            .contentShape(Rectangle())
                     }
-                )
+                    .buttonStyle(BouncyButtonStyle())
+                }
                 .padding(.horizontal)
                 .padding(.vertical, 8)
+
+                // Active filters indicator
+                if hasActiveFilters && !filterManager.filters.allSatisfy({ $0.isSelected }) {
+                    activeFiltersView
+                }
 
                 if !dataManager.selectedVerbs.isEmpty && !isSearchFocused {
                     studyButton
@@ -56,6 +79,62 @@ struct VerbListView: View {
             }
         }
         .background(Color.appBackground)
+        .sheet(isPresented: $showingFilters) {
+            SearchFilterView(filterManager: filterManager, isPresented: $showingFilters)
+                .withTheming()
+        }
+    }
+
+    private var hasActiveFilters: Bool {
+        !filterManager.filters.isEmpty && filterManager.filters.contains(where: { $0.isSelected })
+    }
+
+    private var activeFiltersView: some View {
+        ScrollView(.horizontal, showsIndicators: false) {
+            HStack(spacing: 8) {
+                ForEach(filterManager.filters.filter { $0.isSelected }, id: \.id) { filter in
+                    HStack(spacing: 4) {
+                        Text(filter.type.rawValue)
+                            .font(.caption)
+                            .foregroundColor(Color.appAccent)
+
+                        Button(action: {
+                            if filterManager.filters.firstIndex(where: { $0.type == filter.type })
+                                != nil
+                            {
+                                filterManager.updateFilter(type: filter.type, isSelected: false)
+                            }
+                        }) {
+                            Image(systemName: "xmark.circle.fill")
+                                .font(.system(size: 12))
+                                .foregroundColor(Color.appSubtitle.opacity(0.7))
+                        }
+                    }
+                    .padding(.vertical, 6)
+                    .padding(.horizontal, 10)
+                    .background(Color.appAccent.opacity(0.1))
+                    .cornerRadius(12)
+                }
+
+                if filterManager.filters.filter({ $0.isSelected }).count
+                    < filterManager.filters.count
+                {
+                    Button(action: {
+                        filterManager.selectAll()
+                    }) {
+                        Text("Reset")
+                            .font(.caption)
+                            .foregroundColor(Color.appText)
+                            .padding(.vertical, 6)
+                            .padding(.horizontal, 10)
+                            .background(Color.appSurface)
+                            .cornerRadius(12)
+                    }
+                }
+            }
+            .padding(.horizontal)
+            .padding(.bottom, 8)
+        }
     }
 
     private var loadingView: some View {
@@ -89,6 +168,14 @@ struct VerbListView: View {
                 Text("Try a different search term")
                     .font(.subheadline)
                     .foregroundColor(Color.appSubtitle.opacity(0.7))
+
+                // Added text about filters
+                if !hasActiveFilters || !filterManager.filters.allSatisfy({ $0.isSelected }) {
+                    Text("Or check your search filters")
+                        .font(.subheadline)
+                        .foregroundColor(Color.appSubtitle.opacity(0.7))
+                        .padding(.top, -8)
+                }
 
                 Button(action: {
                     searchText = ""
@@ -187,30 +274,5 @@ struct VerbRowView: View {
             }
         }
         .padding(.vertical, 4)
-    }
-}
-
-struct ErrorView: View {
-    let message: String
-    let retryAction: () -> Void
-
-    var body: some View {
-        VStack(spacing: 16) {
-            Image(systemName: "exclamationmark.triangle")
-                .font(.largeTitle)
-                .foregroundColor(Color.appRed)
-
-            Text(message)
-                .multilineTextAlignment(.center)
-                .foregroundColor(Color.appText)
-
-            Button("Retry", action: retryAction)
-                .padding()
-                .background(Color.appAccent)
-                .foregroundColor(.white)
-                .cornerRadius(8)
-        }
-        .padding()
-        .background(Color.appBackground)
     }
 }

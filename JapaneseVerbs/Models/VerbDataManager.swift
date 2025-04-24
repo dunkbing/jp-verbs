@@ -119,44 +119,80 @@ class VerbDataManager: ObservableObject {
         }
     }
 
-    func search(text: String) -> [Verb] {
+    func search(text: String, filters: [SearchFilter]? = nil) -> [Verb] {
         if text.isEmpty {
             return verbs
         }
 
         let searchText = text.lowercased()
+        let enabledFilters = filters?.filter { $0.isSelected } ?? []
 
+        if enabledFilters.isEmpty {
+            return []
+        }
+
+        // Search only in selected fields
         return verbs.filter { verb in
-            return verb.romaji.lowercased().contains(searchText)
-                || verb.presentIndicativeMeaningPositive.lowercased().contains(searchText)
-                || verb.presentIndicativeMeaningNegative.lowercased().contains(searchText)
-                || verb.presentIndicativePlainPositive.contains {
-                    $0.lowercased().contains(searchText)
+            for filter in enabledFilters {
+                switch filter.type {
+                case .romaji:
+                    if verb.romaji.lowercased().contains(searchText) {
+                        return true
+                    }
+                case .meaning:
+                    if verb.presentIndicativeMeaningPositive.lowercased().contains(searchText)
+                        || verb.presentIndicativeMeaningNegative.lowercased().contains(searchText)
+                    {
+                        return true
+                    }
+                case .japanese:
+                    // Check all Japanese forms
+                    if verb.presentIndicativePlainPositive.contains(where: {
+                        $0.lowercased().contains(searchText)
+                    })
+                        || verb.presentIndicativePlainNegative.contains(where: {
+                            $0.lowercased().contains(searchText)
+                        })
+                        || verb.presentIndicativePolitePositive.contains(where: {
+                            $0.lowercased().contains(searchText)
+                        })
+                        || verb.presentIndicativePoliteNegative.contains(where: {
+                            $0.lowercased().contains(searchText)
+                        })
+                        || verb.pastIndicativePlainPositive.contains(where: {
+                            $0.lowercased().contains(searchText)
+                        })
+                        || verb.pastIndicativePlainNegative.contains(where: {
+                            $0.lowercased().contains(searchText)
+                        })
+                        || verb.pastIndicativePolitePositive.contains(where: {
+                            $0.lowercased().contains(searchText)
+                        })
+                        || verb.pastIndicativePoliteNegative.contains(where: {
+                            $0.lowercased().contains(searchText)
+                        })
+                    {
+                        return true
+                    }
+                case .stem:
+                    if verb.stem.lowercased().contains(searchText) {
+                        return true
+                    }
+                case .teForm:
+                    if verb.teForm.lowercased().contains(searchText) {
+                        return true
+                    }
+                case .infinitive:
+                    if verb.infinitive.lowercased().contains(searchText) {
+                        return true
+                    }
+                case .verbClass:
+                    if verb.verbClass.lowercased().contains(searchText) {
+                        return true
+                    }
                 }
-                || verb.presentIndicativePlainNegative.contains {
-                    $0.lowercased().contains(searchText)
-                }
-                || verb.presentIndicativePolitePositive.contains {
-                    $0.lowercased().contains(searchText)
-                }
-                || verb.presentIndicativePoliteNegative.contains {
-                    $0.lowercased().contains(searchText)
-                }
-                || verb.pastIndicativePlainPositive.contains {
-                    $0.lowercased().contains(searchText)
-                }
-                || verb.pastIndicativePlainNegative.contains {
-                    $0.lowercased().contains(searchText)
-                }
-                || verb.pastIndicativePolitePositive.contains {
-                    $0.lowercased().contains(searchText)
-                }
-                || verb.pastIndicativePoliteNegative.contains {
-                    $0.lowercased().contains(searchText)
-                } || verb.stem.lowercased().contains(searchText)
-                || verb.teForm.lowercased().contains(searchText)
-                || verb.infinitive.lowercased().contains(searchText)
-                || verb.verbClass.lowercased().contains(searchText)
+            }
+            return false
         }
     }
 }
