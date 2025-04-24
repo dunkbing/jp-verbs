@@ -89,50 +89,77 @@ struct VerbListView: View {
     }
 
     private var activeFiltersView: some View {
-        ScrollView(.horizontal, showsIndicators: false) {
-            HStack(spacing: 8) {
-                ForEach(filterManager.filters.filter { $0.isSelected }, id: \.id) { filter in
-                    HStack(spacing: 4) {
-                        Text(filter.type.rawValue)
-                            .font(.caption)
-                            .foregroundColor(Color.appAccent)
+        VStack(alignment: .leading, spacing: 8) {
+            Text("Active Filters:")
+                .font(.subheadline)
+                .foregroundColor(Color.appSubtitle)
+                .padding(.horizontal)
+                .padding(.top, 4)
 
-                        Button(action: {
-                            if filterManager.filters.firstIndex(where: { $0.type == filter.type })
-                                != nil
-                            {
-                                filterManager.updateFilter(type: filter.type, isSelected: false)
+            ScrollView(.horizontal, showsIndicators: false) {
+                HStack(spacing: 8) {
+                    ForEach(filterManager.filters.filter { $0.isSelected }, id: \.id) { filter in
+                        HStack(spacing: 6) {
+                            Text(filter.type.rawValue)
+                                .font(.caption)
+                                .foregroundColor(Color.appAccent)
+                                .lineLimit(1)
+
+                            Button(action: {
+                                if filterManager.filters.firstIndex(where: {
+                                    $0.type == filter.type
+                                }) != nil {
+                                    filterManager.updateFilter(type: filter.type, isSelected: false)
+                                }
+                            }) {
+                                Image(systemName: "xmark.circle.fill")
+                                    .font(.system(size: 12))
+                                    .foregroundColor(Color.appSubtitle.opacity(0.7))
                             }
-                        }) {
-                            Image(systemName: "xmark.circle.fill")
-                                .font(.system(size: 12))
-                                .foregroundColor(Color.appSubtitle.opacity(0.7))
+                            .buttonStyle(PlainButtonStyle())
                         }
+                        .padding(.vertical, 6)
+                        .padding(.horizontal, 10)
+                        .background(
+                            RoundedRectangle(cornerRadius: 12)
+                                .fill(Color.appAccent.opacity(0.1))
+                        )
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 12)
+                                .stroke(Color.appAccent.opacity(0.2), lineWidth: 1)
+                        )
                     }
-                    .padding(.vertical, 6)
-                    .padding(.horizontal, 10)
-                    .background(Color.appAccent.opacity(0.1))
-                    .cornerRadius(12)
-                }
 
-                if filterManager.filters.filter({ $0.isSelected }).count
-                    < filterManager.filters.count
-                {
-                    Button(action: {
-                        filterManager.selectAll()
-                    }) {
-                        Text("Reset")
-                            .font(.caption)
+                    if filterManager.filters.filter({ $0.isSelected }).count
+                        < filterManager.filters.count
+                    {
+                        Button(action: {
+                            filterManager.selectAll()
+                        }) {
+                            HStack(spacing: 4) {
+                                Image(systemName: "arrow.clockwise")
+                                    .font(.system(size: 10))
+                                Text("Reset")
+                                    .font(.caption)
+                            }
                             .foregroundColor(Color.appText)
                             .padding(.vertical, 6)
                             .padding(.horizontal, 10)
-                            .background(Color.appSurface)
-                            .cornerRadius(12)
+                            .background(
+                                RoundedRectangle(cornerRadius: 12)
+                                    .fill(Color.appSurface)
+                            )
+                            .overlay(
+                                RoundedRectangle(cornerRadius: 12)
+                                    .stroke(Color.appSurface2, lineWidth: 1)
+                            )
+                        }
+                        .buttonStyle(PlainButtonStyle())
                     }
                 }
+                .padding(.horizontal)
+                .padding(.bottom, 8)
             }
-            .padding(.horizontal)
-            .padding(.bottom, 8)
         }
     }
 
