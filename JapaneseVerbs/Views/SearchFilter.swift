@@ -86,6 +86,8 @@ class SearchFilterManager: ObservableObject {
                 verbClassEnabled = filter.isSelected
             }
         }
+        // Notify observers that the filters have changed
+        objectWillChange.send()
     }
 
     func updateFilter(type: SearchFilterType, isSelected: Bool) {
@@ -133,13 +135,16 @@ struct SearchFilterView: View {
         NavigationView {
             List {
                 Section(header: Text("Select Search Filters")) {
-                    ForEach(filterManager.filters.indices, id: \.self) { index in
+                    ForEach(filterManager.filters) { filter in
                         FilterRowView(
-                            filter: filterManager.filters[index],
-                            onToggle: { isSelected in
-                                filterManager.filters[index].isSelected = isSelected
-                                filterManager.saveFilters()
-                            }
+                            filter: filter,
+                            isSelected: Binding<Bool>(
+                                get: { filter.isSelected },
+                                set: { newValue in
+                                    filterManager.updateFilter(
+                                        type: filter.type, isSelected: newValue)
+                                }
+                            )
                         )
                     }
                 }
@@ -175,21 +180,13 @@ struct SearchFilterView: View {
                         dismiss()
                     }
                 }
-
-                #if os(macOS)
-                ToolbarItem(placement: .cancellationAction) {
-                    Button("Cancel") {
-                        dismiss()
-                    }
-                }
-                #endif
             }
             .background(Color.appBackground)
         }
         #if os(iOS)
-        .navigationViewStyle(StackNavigationViewStyle())
+            .navigationViewStyle(StackNavigationViewStyle())
         #else
-        .frame(minWidth: 400, minHeight: 500)
+            .frame(minWidth: 400, minHeight: 500)
         #endif
     }
 }
@@ -197,15 +194,7 @@ struct SearchFilterView: View {
 // Separate view for filter row to ensure correct updates
 struct FilterRowView: View {
     let filter: SearchFilter
-    let onToggle: (Bool) -> Void
-
-    @State private var isOn: Bool
-
-    init(filter: SearchFilter, onToggle: @escaping (Bool) -> Void) {
-        self.filter = filter
-        self.onToggle = onToggle
-        _isOn = State(initialValue: filter.isSelected)
-    }
+    @Binding var isSelected: Bool
 
     var body: some View {
         HStack {
@@ -221,24 +210,15 @@ struct FilterRowView: View {
 
             Spacer()
 
-            Toggle(
-                "",
-                isOn: Binding(
-                    get: { isOn },
-                    set: { newValue in
-                        isOn = newValue
-                        onToggle(newValue)
-                    }
-                )
-            )
-            .toggleStyle(SwitchToggleStyle(tint: Color.appAccent))
-            .labelsHidden()
-            #if os(macOS)
-            .scaleEffect(0.8)
-            #endif
+            Toggle("", isOn: $isSelected)
+                .toggleStyle(SwitchToggleStyle(tint: Color.appAccent))
+                .labelsHidden()
+                #if os(macOS)
+                    .scaleEffect(0.8)
+                #endif
         }
         #if os(macOS)
-        .padding(.vertical, 4)
+            .padding(.vertical, 4)
         #endif
     }
 }
